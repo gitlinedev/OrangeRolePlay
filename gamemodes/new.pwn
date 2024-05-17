@@ -864,8 +864,6 @@ new NPC_ALL[30],
 	ArmyStolovaya,
 	EatPolice,
 	EatPolice1,
-	VhodArmyShatb,
-	VihodArmyShatb,
 	VihodVoenkomat,
 	speedometer_Update[MAX_PLAYERS],
 	VhodMeriya,
@@ -2217,7 +2215,6 @@ public OnGameModeInit()
 	#include <Mapping/int_ordinator>
 	#include <Mapping/int_kazino>
 	#include <Mapping/int_carschool>
-	#include <Mapping/int_vchstab>
 	#include <Mapping/int_vchkazarma>
 	#include <Mapping/int_vchstolovaya>
 	#include <Mapping/int_kazna>
@@ -2382,7 +2379,6 @@ public OnPlayerConnect(playerid)
 	//
 	ArmyStorageZone = CreateDynamicCircle(1567.5477,1823.2529, 3.0, 0, 0, -1);
 	capturezonespawn = CreateDynamicCube(1449.5,-1355, 1591.5, -1133, 850.0, 0, 0, -1);
-
 
 	ClearPlayerData(playerid);
 
@@ -3510,8 +3506,8 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		if(PI[playerid][pHospital] == 1) return SCM(playerid, COLOR_GREY, !"Вы должны пройти курс восстановления");
 	    SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
-	    SetPlayerPos(playerid, 1815.2858,1757.3978,15.2938);
-		SetPlayerFacingAngle(playerid, 271.5544);
+	    SetPlayerPos(playerid, -2586.5718,315.1530,12.2297);
+		SetPlayerFacingAngle(playerid, 0.4595);
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
@@ -3525,15 +3521,17 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
-	if(pickupid == VihodArmyStolovaya) {
+	if(pickupid == VihodArmyStolovaya) 
+	{
 	    SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
-	    SetPlayerPos(playerid, 1721.7825,1755.8361,15.3300);
-		SetPlayerFacingAngle(playerid, 179.0169);
+	    SetPlayerPos(playerid, -2563.5996,356.2647,12.2297);
+		SetPlayerFacingAngle(playerid, 89.4610);
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
-	if(pickupid == 	vhodtirkavkaz) {
+	if(pickupid == 	vhodtirkavkaz)
+	{
 	    SetPlayerVirtualWorld(playerid, -5);
 	    SetPlayerInterior(playerid, -5);
 	    SetPlayerPos(playerid, -146.5389,1816.7775,-5.9800);
@@ -3541,7 +3539,8 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
-	if(pickupid == 	vihodtirkavkaz) {
+	if(pickupid == 	vihodtirkavkaz) 
+	{
 	    SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
 	    SetPlayerPos(playerid, -358.2168,-1182.2168,41.0009);
@@ -3581,9 +3580,10 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
-	if(pickupid == 	vhodtirvch) {
-	    SetPlayerVirtualWorld(playerid, -2);
-	    SetPlayerInterior(playerid, -2);
+	if(pickupid == 	vhodtirvch) 
+	{
+	    SetPlayerVirtualWorld(playerid, 3);
+	    SetPlayerInterior(playerid, 3);
 	    SetPlayerPos(playerid, -146.5389,1816.7775,-5.9800);
 		SetPlayerFacingAngle(playerid, 181.4917);
 		SetCameraBehindPlayer(playerid);
@@ -3592,8 +3592,8 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 	if(pickupid == 	vihodtirvch) {
 	    SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
-	    SetPlayerPos(playerid, 1675.9921,1729.4916,15.3263);
-		SetPlayerFacingAngle(playerid, 176.8006);
+	    SetPlayerPos(playerid,-2637.2041,312.9039,11.0944);
+		SetPlayerFacingAngle(playerid, 92.3226);
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
@@ -3614,23 +3614,6 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		return Freeze(playerid);
 	}
 	if(pickupid == EatPolice || pickupid == EatPolice1 || pickupid == ArmyStolovaya) return ShowPlayerDialog(playerid, 3898, DIALOG_STYLE_LIST, "{ee3366}Пищевой автомат", "1. Кока Кола\n2. Шоколадка сникерс\n3. Энергетик 'Orangesh'", "Выбрать", "Закрыть");
-	if(pickupid == VhodArmyShatb) {
-		if(PI[playerid][pMember] != 2) return SCM(playerid, COLOR_GREY, !"Вход в штаб доступен только военным");
-	    SetPlayerVirtualWorld(playerid, 7);
-	    SetPlayerInterior(playerid, 7);
-	    SetPlayerPos(playerid, -119.5845,1383.6361,1208.6801);
-		SetPlayerFacingAngle(playerid, 270.4205);
-		SetCameraBehindPlayer(playerid);
-		return Freeze(playerid);
-	}
-	if(pickupid == VihodArmyShatb) {
-	    SetPlayerVirtualWorld(playerid, 0);
-	    SetPlayerInterior(playerid, 0);
-	    SetPlayerPos(playerid, 1780.4077,1761.7087,15.3200);
-		SetPlayerFacingAngle(playerid, 86.5325);
-		SetCameraBehindPlayer(playerid);
-		return Freeze(playerid);
-	}
 	if(pickupid == VihodVoenkomat) {
 	    SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
@@ -3877,7 +3860,8 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
-	if(pickupid == MagazNaVh ) {
+	if(pickupid == MagazNaVh ) 
+	{
 	    if(PI[playerid][pMember] != 2) return SCM(playerid, COLOR_GREY, !"Вы не являетесь сотрудником Войсковой Части");
  		SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
@@ -3886,19 +3870,22 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
-	if(pickupid == VihodMagazNaVh) {
+	if(pickupid == VihodMagazNaVh) 
+	{
  		SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
-	    SetPlayerPos(playerid, 1735.7375,1753.1901,15.3263);
-		SetPlayerFacingAngle(playerid, 183.7936);
+	    SetPlayerPos(playerid, -2606.4041,356.3741,12.2297);
+		SetPlayerFacingAngle(playerid, 268.8409);
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
-	if(pickupid == Pravo_givegun_pickup) {
+	if(pickupid == Pravo_givegun_pickup) 
+	{
 		if(PI[playerid][pMember] != 1) return SCM(playerid, COLOR_GREY, "У Вас нет доступа к этому складу");
 		ShowPlayerDialog(playerid, dialog_GIVEGUNPRAVO, DIALOG_STYLE_LIST, "{ee3366}Получение оружия", "1. Desert Eagle\n2. Тайзер\n3. AKС-74У", "Получить", "Отмена");
 	}
-	if(pickupid == vhe_magaz) {
+	if(pickupid == vhe_magaz) 
+	{
 		if(PI[playerid][pMember] != 2) return SCM(playerid, COLOR_GREY, "У Вас нет доступа к этому складу");
 		ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
 	}
@@ -3953,8 +3940,8 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 	{
  		SetPlayerVirtualWorld(playerid, 0);
 	    SetPlayerInterior(playerid, 0);
-	    SetPlayerPos(playerid, 1667.6770,1697.3138,15.0301);
-		SetPlayerFacingAngle(playerid, 269.9289);
+	    SetPlayerPos(playerid, -2754.8423,351.2632,10.9850);
+		SetPlayerFacingAngle(playerid, 269.9922);
 		SetCameraBehindPlayer(playerid);
 		return Freeze(playerid);
 	}
@@ -4326,20 +4313,20 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 	 	    }
 	 	    if(IsPlayerInRangeOfPoint(playerid, 7.0, -165.3361,625.0273,-50.1706)) 
 			{
-					new vehicle = GetPlayerVehicleID(playerid);
-            		SetVehiclePos(vehicle, 1870.2343,-2214.6035,10.7737);
-		 	        LinkVehicleToInterior(vehicle, 0);
-		 	        SetVehicleVirtualWorld(vehicle, 0);
-		 	        SetVehicleZAngle(vehicle, 179.7689);
-		 	        SetPlayerPosAC(playerid, 1870.2343,-2214.6035,10.7737);
-	         		SetPlayerVirtualWorld(playerid, 0);
-		    		SetPlayerInterior(playerid, 0);
-		    		PutPlayerInVehicle(playerid, vehicle, 0);
+				new vehicle = GetPlayerVehicleID(playerid);
+				SetVehiclePos(vehicle, 1870.2343,-2214.6035,10.7737);
+				LinkVehicleToInterior(vehicle, 0);
+				SetVehicleVirtualWorld(vehicle, 0);
+				SetVehicleZAngle(vehicle, 179.7689);
+				SetPlayerPosAC(playerid, 1870.2343,-2214.6035,10.7737);
+				SetPlayerVirtualWorld(playerid, 0);
+				SetPlayerInterior(playerid, 0);
+				PutPlayerInVehicle(playerid, vehicle, 0);
 	 	    }
 	 	}
 	 	if(PI[playerid][pMember] == 2) 
 		{
-			if(IsPlayerInRangeOfPoint(playerid, 7.0, 1661.4113,1705.3988,15.3263)) 
+			if(IsPlayerInRangeOfPoint(playerid, 7.0, -2754.5576,351.0330,10.5823)) 
 			{
 		 	    if(carid == army_car[0] || carid == army_car[1] ||
 				carid == army_car[2] || carid == army_car[3] || carid == army_car[4] || carid == army_car[5] ||
@@ -4358,15 +4345,15 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 	 	    }
 	 	    if(IsPlayerInRangeOfPoint(playerid, 7.0, -165.3361,625.0273,-50.1706))
 			{
-					new vehicle = GetPlayerVehicleID(playerid);
-		 	        SetVehiclePos(vehicle, 1667.6770,1697.3138,15.0301);
-		 	        LinkVehicleToInterior(vehicle, 0);
-		 	        SetVehicleVirtualWorld(vehicle, 0);
-		 	        SetVehicleZAngle(vehicle, 269.9289);
-		 	        SetPlayerPosAC(playerid, 1667.6770,1697.3138,15.0301);
-	         		SetPlayerVirtualWorld(playerid, 0);
-		    		SetPlayerInterior(playerid, 0);
-		    		PutPlayerInVehicle(playerid, vehicle, 0);
+				new vehicle = GetPlayerVehicleID(playerid);
+				SetVehiclePos(vehicle, -2748.1858,342.4038,11.5815);
+				LinkVehicleToInterior(vehicle, 0);
+				SetVehicleVirtualWorld(vehicle, 0);
+				SetVehicleZAngle(vehicle, 272.7158);
+				SetPlayerPosAC(playerid, 1-2748.1858,342.4038,11.5815);
+				SetPlayerVirtualWorld(playerid, 0);
+				SetPlayerInterior(playerid, 0);
+				PutPlayerInVehicle(playerid, vehicle, 0);
 	 	    }
 	 	}
 	 	if(PI[playerid][pMember] == 3) 
@@ -12768,6 +12755,10 @@ callback: LoadPlayerData(playerid)
 
 		if(PI[playerid][pAdmin] >= 1)  
 		{
+			if(PI[playerid][pAdminNumber] == 0) 
+			{
+				PI[playerid][pAdminNumber] = random(9999);
+			}
 			Iter_Add(Admin, playerid);
 			SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] вошел на сервер", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName], playerid);
 		}
@@ -21055,6 +21046,8 @@ stock ShowApanel(playerid)
 }
 stock RemoveBuild(playerid) 
 {
+	//новый спавн
+	RemoveBuildingForPlayer(playerid, 4885, 1740.9000, 2522.9399, 17.0780, 0.25);
 	//123321_123321
 	RemoveBuildingForPlayer(playerid, 2009, 2567.8301, -2098.8000, 22.5000, 0.25);
 	RemoveBuildingForPlayer(playerid, 2010, 2567.8301, -2098.8000, 22.5000, 0.25);
@@ -25805,10 +25798,10 @@ stock OtherMapping()
 	AutoSchool_Info = CreateDynamicPickup(1239, 23,2277.3806,2711.6648,1122.4604, -1);
 	AutoSchool_Test = CreateDynamicPickup(1210, 23, 2275.4622,2708.3694,1122.4604, -1);
 	Create3DTextLabel("{008000}Казарма", -1, 1787.7538,1786.4166,17.2422, 20.0, 0);
-	VhodArmyKazarmy = CreateDynamicPickup(1318, 23, 1812.9086,1756.0264,15.2924, -1);
+	VhodArmyKazarmy = CreateDynamicPickup(1318, 23, -2586.6238,311.0948,12.2297, -1);
 	VihodArmyKazarmy  = CreateDynamicPickup(1318, 23, 742.7764,1506.8319,2002.1899, -1);
 	Create3DTextLabel("{008000}Столовая", -1, 1720.6887,1758.3757,15.3300, 20.0, 0);
-	VhodArmyStolovaya = CreateDynamicPickup(1318, 23, 1720.6887,1758.3757,15.3300, -1);
+	VhodArmyStolovaya = CreateDynamicPickup(1318, 23, -2559.2588,356.1953,12.2297, -1);
 	VihodArmyStolovaya = CreateDynamicPickup(1318, 23, -2433.8774,1812.5083,2053.4800, -1);
 	ArmyStolovaya = CreateDynamicPickup(1314, 16089, -2430.6829,1801.1373,2053.4800, -1);
 	EatPolice = CreateDynamicPickup(16089, 23, 119.2875,1887.0156,-31.0664, -1);
@@ -25820,8 +25813,8 @@ stock OtherMapping()
 	vihodtirgopota = CreateDynamicPickup(1318, 23, -145.8029,1818.6835,-5.9800, -4);
 	vhodtirskinhed = CreateDynamicPickup(1318, 23, 1401.3895,2399.4485,13.4012, 0);
 	vihodtirskinhed = CreateDynamicPickup(1318, 23, -145.8029,1818.6835,-5.9800, -3);
-	vhodtirvch = CreateDynamicPickup(1318, 23, 1676.0179,1733.1219,15.3351, 0);
-	vihodtirvch = CreateDynamicPickup(1318, 23, -145.8029,1818.6835,-5.9800 -2);
+	vhodtirvch = CreateDynamicPickup(1318, 23, -2633.2554,312.8313,11.2209, 0);
+	vihodtirvch = CreateDynamicPickup(1318, 23, -145.8029,1818.6835,-5.9800, 2);
 	vhodtirpravo = CreateDynamicPickup(1318, 23, 1907.2701,-2209.0989,11.7839, 0);
 	vihodtirpravo = CreateDynamicPickup(1318, 23, -145.8029,1818.6835,-5.9800, -1);
 	//информационные пикапы
@@ -25844,14 +25837,10 @@ stock OtherMapping()
 	//информационный пикап Министерства Внутренних Дел (Полиция)
 	Create3DTextLabel("{FFFF00}Информационный пикап", -1, 125.1833,1860.9231,-31.9775, 20.0, 1, 1);
 	MVDinfo = CreateDynamicPickup(1239, 23,125.1833,1860.9231,-31.9775, -1);
-	Create3DTextLabel("{FFD700}Войсковая часть\n{FFFFFF}Начальство", -1,1781.1344,1755.3319,19.1925, 20.0, 0);
-	VhodArmyShatb = CreateDynamicPickup(1318, 23, 1781.1344,1755.3319,19.1925, -1);
-	VihodArmyShatb = CreateDynamicPickup(1318, 23, -123.2984,1383.7922,1208.6801, -1);
 	VihodVoenkomat = CreateDynamicPickup(1318, 23, 2491.6680,210.6661,1502.4700, -1);
 	Create3DTextLabel("{FFD700}Парковка\n{FFFFFF}Правительство", -1,1874.6547,-2208.8955,11.2510, 20.0, 0);
 	VihodMagazNaVh = CreateDynamicPickup(1318, 23, -1412.5814,381.9860,419.1073, 0);
-	Create3DTextLabel("{FFD700}Войсковая часть\n{FFFFFF}Магазин", -1,1735.3340,1758.3459,15.3300, 20.0, 0);
-	MagazNaVh = CreateDynamicPickup(1318, 23, 1735.3340,1758.3459,15.3300, 0);
+	MagazNaVh = CreateDynamicPickup(1318, 23, -2610.6729,356.4666,12.2297, 0);
 	MeriyaGarageVhod = CreateDynamicPickup(1318, 23, 1874.6547,-2208.8955,11.2510, -1);
 	MeriyaGarageVihod = CreateDynamicPickup(1318, 23, -168.2390,626.4500,-50.1706, 1);
 	Create3DTextLabel("{FFD700}Парковка\n{FFFFFF}Полиция", -1,2441.2083,-1798.4343,21.9369, 20.0, 0);
@@ -25861,11 +25850,11 @@ stock OtherMapping()
 	CRBGarageVhod = CreateDynamicPickup(1318, 23, 2143.4570,1809.5634,12.2200, -1);
 	CRBGarageVihod = CreateDynamicPickup(1318, 23, -168.2390,626.4500,-50.1706, 3);
 	Create3DTextLabel("{FFD700}Въезд", -1,2304.1958,-2285.7551,22.9721, 20.0, 0);
-	VchGarageVhod = CreateDynamicPickup(1318, 23, 1661.6768,1701.1998,15.3263, -1);
+	VchGarageVhod = CreateDynamicPickup(1318, 23, -2757.7261,347.3786,10.9850, -1);
 	VchGarageVihod = CreateDynamicPickup(1318, 23, -168.2390,626.4500,-50.1706, 4);
 	GopotaGarageVhod = CreateDynamicPickup(1318, 23, 2243.2651,-2587.0442,21.9600, -1);
 	GopotaGarageVihod = CreateDynamicPickup(1318, 23, -168.2390,626.4500,-50.1706, 5);
-	Create3DTextLabel("{FFD700}Въезд", -1,1661.4113,1705.3988,15.3263, 20.0, 0);
+	Create3DTextLabel("{FFD700}Въезд", -1, -2757.7310,351.1184,10.9850, 20.0, 0);
 	SkinheadGarageVhod = CreateDynamicPickup(1318, 23, 1437.9170,2389.7988,13.6925, -1);
 	SkinheadGarageVihod = CreateDynamicPickup(1318, 23, -168.2390,626.4500,-50.1706, 6);
 	Create3DTextLabel("{FFD700}Въезд", -1,-562.5096,-1392.1708,42.1858, 20.0, 0);
@@ -27201,4 +27190,89 @@ callback: ShowLeaders(playerid)
 		CEF__Dialog(playerid, 0, DIALOG_STYLE_TABLIST_HEADERS, "{ee3366}Лидеры и заместители", global_str, "Закрыть", "");
 	}
 	return 1;
+}
+stock NewSpawn()
+{
+	CreateObject(1223, -9.33, -5.99, 6.36,   0.00, 0.00, 0.00);
+	CreateObject(1223, 1722.66, 2547.82, 14.65,   0.00, 0.00, 114.01);
+	CreateObject(1223, 1794.43, 2530.62, 14.66,   0.00, 0.00, 304.87);
+	CreateObject(1223, 1783.07, 2522.29, 14.66,   0.00, 0.00, 292.96);
+	CreateObject(1223, 1805.84, 2537.10, 14.75,   0.00, 0.00, 288.00);
+	CreateObject(970, 1808.71, 2538.01, 15.19,   0.06, 0.00, 24.49);
+	CreateObject(970, 1804.81, 2536.25, 15.20,   0.00, 0.00, 23.95);
+	CreateObject(970, 732.07, 11869.67, -4159.12,   0.00, 0.00, 0.00);
+	CreateObject(970, -1336.08, 8216.56, -7669.68,   0.00, 0.00, 0.00);
+	CreateObject(970, -69.97, 8680.15, -7694.01,   0.00, 0.00, 0.00);
+	CreateObject(970, 1800.85, 2534.49, 15.21,   0.36, 0.12, 23.75);
+	CreateObject(970, 985.41, 7830.02, -8573.92,   0.00, 0.00, 0.00);
+	CreateObject(970, 1797.16, 2532.35, 15.22,   0.00, 0.00, 38.27);
+	CreateObject(970, -2939.78, 5820.11, -8193.64,   0.00, 0.00, 0.00);
+	CreateObject(970, 1793.74, 2529.62, 15.23,   -2.54, 0.32, 38.76);
+	CreateObject(970, -1179.04, 12469.26, 1097.32,   0.00, 0.00, 0.00);
+	CreateObject(970, 1790.31, 2526.97, 15.25,   0.00, 0.00, 37.09);
+	CreateObject(970, 1772.23, 2515.73, 15.23,   0.00, 0.00, 27.19);
+	CreateObject(970, 1787.05, 2524.35, 15.22,   0.00, 0.00, 39.88);
+	CreateObject(970, 1783.61, 2522.00, 15.22,   0.00, 0.00, 29.09);
+	CreateObject(970, 1779.90, 2519.95, 15.22,   0.00, 0.00, 28.67);
+	CreateObject(970, 1776.04, 2517.81, 15.22,   0.00, 0.00, 29.32);
+	CreateObject(970, 1768.52, 2513.77, 15.26,   0.00, 0.00, 28.14);
+	CreateObject(970, 1756.49, 2312.73, 28.14,   0.00, 0.00, 0.00);
+	CreateObject(970, 7935.54, 1379.50, -8507.17,   0.00, 0.00, 0.00);
+	CreateObject(970, 1833.94, 2493.58, 15.21,   0.00, 0.00, 32.85);
+	CreateObject(970, 1816.52, 2541.63, 15.21,   0.00, 0.00, 24.98);
+	CreateObject(970, 1837.50, 2495.92, 15.19,   0.00, 0.00, 33.74);
+	CreateObject(970, 1812.66, 2539.83, 15.20,   0.00, 0.00, 25.07);
+	CreateObject(970, 1841.02, 2498.28, 15.18,   0.00, 0.00, 34.10);
+	CreateObject(970, 1844.58, 2500.62, 15.19,   0.00, 0.00, 32.47);
+	CreateObject(970, 1830.41, 2491.28, 15.20,   0.00, 0.00, 33.07);
+	CreateObject(970, 1823.23, 2486.74, 15.22,   0.00, 0.00, 32.66);
+	CreateObject(970, 1819.65, 2484.51, 15.23,   0.00, 0.00, 31.79);
+	CreateObject(970, 1816.09, 2482.26, 15.22,   0.00, 0.00, 32.94);
+	CreateObject(970, 1826.83, 2489.00, 15.21,   0.00, 0.00, 32.06);
+	CreateObject(970, 1798.35, 2470.79, 15.26,   0.00, 0.00, 32.40);
+	CreateObject(970, 1812.55, 2479.97, 15.22,   0.00, 0.00, 32.40);
+	CreateObject(970, 1809.01, 2477.68, 15.20,   0.00, 0.00, 33.22);
+	CreateObject(970, 1805.47, 2475.38, 15.20,   0.00, 0.00, 32.90);
+	CreateObject(970, 1801.94, 2473.09, 15.22,   0.00, 0.00, 32.87);
+	CreateObject(970, 1794.78, 2468.50, 15.26,   0.00, 0.00, 32.66);
+	CreateObject(970, 7914.37, -4035.28, -4852.32,   0.00, 0.00, 0.00);
+	CreateObject(970, 1846.81, 2503.78, 15.22,   0.00, 0.00, 76.97);
+	CreateObject(970, 1841.10, 2513.56, 15.26,   0.00, 0.00, 304.71);
+	CreateObject(970, 1846.15, 2506.87, 15.26,   0.00, 0.00, 308.58);
+	CreateObject(970, 1843.57, 2510.18, 15.26,   0.00, 0.00, 307.16);
+	CreateObject(970, 7265.15, 6509.61, -7391.57,   0.00, 0.00, 0.00);
+	CreateObject(970, -1702.65, 3750.48, -9910.49,   0.00, 0.00, 0.00);
+	CreateObject(970, 1837.66, 2521.87, 15.21,   0.00, 0.00, 36.73);
+	CreateObject(970, 1838.66, 2516.96, 15.25,   0.00, 0.00, 306.35);
+	CreateObject(970, 3469.00, 4452.51, -9740.69,   0.00, 0.00, 0.00);
+	CreateObject(1459, -2.30, -1.59, 1.57,   0.00, 0.00, 0.00);
+	CreateObject(1459, 1836.79, 2519.64, 14.66,   0.00, 0.00, 125.90);
+	CreateObject(970, 1823.77, 2545.88, 15.27,   0.00, 0.00, 34.09);
+	CreateObject(970, 1820.23, 2543.63, 15.21,   0.00, 0.00, 31.26);
+	CreateObject(970, 1525.31, 7411.03, -9217.01,   0.00, 0.00, 0.00);
+	CreateObject(970, 1827.24, 2548.26, 15.24,   0.00, 0.00, 34.45);
+	CreateObject(970, 1830.70, 2550.66, 15.22,   0.00, 0.00, 34.72);
+	CreateObject(970, 4337.75, 5904.71, -9256.18,   0.00, 0.00, 0.00);
+	CreateObject(970, 1844.24, 2544.89, 15.18,   0.00, 0.00, 310.17);
+	CreateObject(970, 1841.54, 2548.11, 15.18,   0.00, 0.00, 310.30);
+	CreateObject(970, 1838.16, 2550.16, 15.18,   0.00, 0.00, 346.99);
+	CreateObject(970, 1834.00, 2551.06, 15.22,   0.00, 0.00, 347.94);
+	CreateObject(970, 1846.81, 2541.57, 15.14,   0.00, 0.00, 305.01);
+	CreateObject(970, 9529.54, -2427.75, -4288.17,   0.00, 0.00, 0.00);
+	CreateObject(970, 1846.35, 2538.58, 15.19,   0.00, 0.00, 37.27);
+	CreateObject(970, 1842.98, 2536.08, 15.20,   0.00, 0.00, 35.77);
+	CreateObject(1223, 1818.27, 2542.76, 14.75,   0.00, 0.00, 295.42);
+	CreateObject(1223, 1832.05, 2551.81, 14.75,   0.00, 0.00, 274.29);
+	CreateObject(1223, 1839.98, 2539.40, 14.75,   0.00, 0.00, 34.18);
+	CreateObject(1223, 10255.11, 5992.69, -4542.14,   0.00, 0.00, 0.00);
+	CreateObject(1216, 1832.81, 2531.69, 15.42,   0.00, 0.00, 301.83);
+	CreateObject(970, 1764.72, 2511.71, 15.26,   0.00, 0.00, 28.50);
+	CreateObject(4879, -3641.56, -267.52, -7977.82,   0.00, 0.00, 0.00);
+	CreateObject(4879, -3641.56, -267.52, -7977.82,   0.00, 0.00, 0.00);
+	CreateObject(4879, 1775.19, 2384.85, 17.81,   0.00, 0.00, 124.49);
+	CreateObject(4886, 1759.49, 2509.92, 18.07,   0.00, 0.00, 120.94);
+	CreateObject(4886, 7566.57, 5359.35, -7593.35,   0.00, 0.00, 0.00);
+	CreateObject(4886, 1764.07, 2503.10, 18.07,   0.00, 0.00, 121.47);
+	CreateObject(714, 11721.59, 4148.63, -6718.85,   0.00, 0.00, 0.00);
+	CreateObject(714, 9659.19, 5862.27, -5521.75,   0.00, 0.00, 0.00);
 }

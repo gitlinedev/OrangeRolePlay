@@ -198,9 +198,11 @@ CMD:mphp(playerid,params[])
 	if(sscanf(params,"d",params[0])) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /mphp [кол-во]");
 	new Float:x,Float:y,Float:z;
 	GetPlayerPos(playerid, x,y,z);
-   	for(new i = 0; i < MAX_PLAYERS; i++) {
+   	for(new i = 0; i < MAX_PLAYERS; i++) 
+	{
 		if(!IsPlayerConnected(i)) continue;
-		if(PlayerToPoint(100.0, i, x,y,z)) {
+		if(PlayerToPoint(100.0, i, x,y,z)) 
+		{
 		    SetPlayerHealthAC(i, params[0]);
 		    SCMf(i, -1,"Игровой мастер #%d изменил уровень вашего здоровья", PI[playerid][pAdminNumber]);
 			PI[i][pHospital] = 0;
@@ -217,7 +219,7 @@ cmd:setmember(playerid, params[])
 	SetPVarInt(playerid, "setMember", params[0]);
 	ShowPlayerDialog(playerid, 2150, DIALOG_STYLE_LIST, "{ee3366}Выберете организацию", "\
 	1. Правительство\n\
-	2. Войсковая часть\
+	2. Войсковая часть\n\
 	3. Полиция\n\
 	4. БЦРБ\n\
 	5. Скинхеды\n\
@@ -239,7 +241,7 @@ cmd:slap(playerid, params[])
 	new Float: SlapHealth;
     GetPlayerHealth(params[0], SlapHealth);
     SetPlayerHealthAC(params[0], SlapHealth - 5);
-	SendClientMessage(playerid, -1, !"Игровой мастер слапнул Вас");
+	SendClientMessage(params[0], -1, !"Игровой мастер слапнул Вас");
 	return true;
 }
 CMD:mparm(playerid,params[]) 
@@ -499,20 +501,20 @@ stock admins_OnDialogResponse(playerid, dialogid, response, listitem)
                     case 2: SetPlayerPos(playerid, 2254.5574,-1727.5728,61.1377);
                     case 3: SetPlayerPos(playerid, 1880.3647,1180.8679,38.8619);
                     case 4: SetPlayerPos(playerid, 2386.1399,-938.3940,14.3443);
-                    case 5: SetPlayerPos(playerid, 1402.7463,2371.0381,23.2061);
-                    case 6: SetPlayerPos(playerid, 2224.7097,-2611.0547,31.8857);
-                    case 7: SetPlayerPos(playerid, -367.4405,-1198.3756,50.2112);
-                    case 8: SetPlayerPos(playerid, 1907.1965,-2226.8005,43.2401);
-                    case 9: SetPlayerPos(playerid, 2403.2986,-1849.3372,21.9369);
-					case 10: SetPlayerPos(playerid, 2113.0063,1821.8636,23.0438);
-                    case 11: SetPlayerPos(playerid, 1558.5304,1820.2159,27.9343);
-                    case 12: SetPlayerPos(playerid, 1816.6481,2095.6685,28.6541);
-                    case 13: SetPlayerPos(playerid, 2336.7915,-1803.0875,33.1497);
-                    case 14: SetPlayerPos(playerid, 2782.3528,2698.6128,16.7200);
-                    case 15: SetPlayerPos(playerid, 1880.3647,1180.8679,38.8619);
-					case 16: SetPlayerPos(playerid, 2469.1038,-714.2072,24.5437);
-					case 17: SetPlayerPos(playerid, 1806.8326,2507.3311,21.5287);
-					case 18: SetPlayerPos(playerid, 1399.9020,-1249.6090,15.1950);
+                    case 5: SetPlayerPos(playerid, 1402.7463,2371.0381,23.2061+2);
+                    case 6: SetPlayerPos(playerid, 2224.7097,-2611.0547,31.8857+2);
+                    case 7: SetPlayerPos(playerid, -367.4405,-1198.3756,50.2112+2);
+                    case 8: SetPlayerPos(playerid, 1907.1965,-2226.8005,43.2401+2);
+                    case 9: SetPlayerPos(playerid, 2403.2986,-1849.3372,21.9369+2);
+					case 10: SetPlayerPos(playerid, 2113.0063,1821.8636,23.0438+2);
+                    case 11: SetPlayerPos(playerid, 1558.5304,1820.2159,27.9343+2);
+                    case 12: SetPlayerPos(playerid, -2586.5540,309.6096,20.9953+2);
+                    case 13: SetPlayerPos(playerid, 2336.7915,-1803.0875,33.1497+2);
+                    case 14: SetPlayerPos(playerid, 2782.3528,2698.6128,16.7200+2);
+                    case 15: SetPlayerPos(playerid, 1880.3647,1180.8679,38.8619+2);
+					case 16: SetPlayerPos(playerid, 2469.1038,-714.2072,24.5437+2);
+					case 17: SetPlayerPos(playerid, 1806.8326,2507.3311,21.5287+2);
+					case 18: SetPlayerPos(playerid, 1399.9020,-1249.6090,15.1950+2);
                 }
 				SetPlayerVirtualWorld(playerid,0);
 				SetPlayerInterior(playerid,0);
