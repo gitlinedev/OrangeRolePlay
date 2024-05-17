@@ -1,0 +1,159 @@
+
+----------
+Loaded log file: "server_log.txt".
+----------
+
+SA-MP Dedicated Server
+----------------------
+v0.3.7-R2, (C)2005-2015 SA-MP Team
+
+[16:30:54] password = ""  (string)
+[16:30:54] 
+[16:30:54] Server Plugins
+[16:30:54] --------------
+[16:30:54]  Loading plugin: crashdetect.so
+[16:30:54]   CrashDetect v4.15.1 is OK.
+[16:30:54]   Loaded.
+[16:30:54]  Loading plugin: pawncmd.so
+[16:30:54] [Pawn.CMD] plugin v3.3.3 by urShadow loaded
+[16:30:54]   Loaded.
+[16:30:54]  Loading plugin: mysql_static.so
+[16:30:54]  >> plugin.mysql: R39-3 successfully loaded.
+[16:30:54]   Loaded.
+[16:30:54]  Loading plugin: sscanf.so
+[16:30:54] 
+
+[16:30:54]  ===============================
+
+[16:30:54]       sscanf plugin loaded.     
+
+[16:30:54]          Version:  2.8.3        
+
+[16:30:54]   (c) 2018 Alex "Y_Less" Cole  
+
+[16:30:54]  ===============================
+
+[16:30:54]   Loaded.
+[16:30:54]  Loading plugin: streamer.so
+[16:30:54] 
+
+*** Streamer Plugin v2.9.4 by Incognito loaded ***
+
+[16:30:54]   Loaded.
+[16:30:54]  Loading plugin: sampvoice.so
+[16:30:54] [sv:dbg:network:init] : module initializing...
+[16:30:54] [dbg:raknet:init] : module initializing...
+[16:30:54] [dbg:raknet:init] : module initialized
+[16:30:54] [sv:dbg:network:init] : module initialized
+[16:30:54] [sv:dbg:main:Load] : creating 8 work threads...
+[16:30:54]  -------------------------------------------    
+[16:30:54]    ___                __   __    _              
+[16:30:54]   / __| __ _ _ __  _ _\ \ / /__ (_) __ ___    
+[16:30:54]   \__ \/ _` | '  \| '_ \   / _ \| |/ _/ -_)
+[16:30:54]   |___/\__,_|_|_|_| .__/\_/\___/|_|\__\___|
+[16:30:54]                   |_|                           
+[16:30:54]  -------------------------------------------    
+[16:30:54]            SampVoice by MOR loaded              
+[16:30:54]  -------------------------------------------    
+[16:30:54]   Loaded.
+[16:30:54]  Loading plugin: CRP.so
+[16:30:54] 
+
+[16:30:54] ______________________________________
+
+[16:30:54]  Convert Rus To Pwn v0.1.1 loaded
+[16:30:54] ______________________________________
+
+[16:30:54]  By: Fro (c) Copyright <TBG> 2009-2011
+[16:30:54] ______________________________________
+
+[16:30:54]   Loaded.
+[16:30:54]  Loading plugin: fmt.so
+[16:30:54]  * fmt plugin loaded
+[16:30:54]  * v2.3 (c) vsergeenko
+[16:30:54]   Loaded.
+[16:30:54]  Loaded 8 plugins.
+
+[16:30:54] 
+[16:30:54] Filterscripts
+[16:30:54] ---------------
+[16:30:54]   Loaded 0 filterscripts.
+
+[16:30:54] [sv:dbg:main:AmxLoad] : net game pointer (value:0x915b020) received
+[16:30:54] [sv:dbg:network:bind] : voice server running on port 47294
+[16:30:54]  
+[16:30:54] --------------------------------------
+[16:30:54]  Анти-чит загружен!
+[16:30:54]  Версия античита: 1.9.54
+[16:30:54]  Автор: Catborisovv
+[16:30:54] --------------------------------------
+
+[16:30:54] MySQL connection: OK
+[16:30:54] 
+------------------------------
+[16:30:54]  Start date: 29.04.2020
+[16:30:54] ------------------------------
+[16:30:54] Number of vehicle models: 18
+[16:30:54] [serv_log]  Load warehouse. Time: 0 ms.
+[16:30:54] [serv_log]  Load kvartiry. Load: 29 b. Time: 22 ms.
+[16:30:54] [serv_log]  Load houses. Load: 13 h. Time: 2 ms.
+[16:30:54] [serv_log]  Load business. Load: 33 b. Time: 7 ms.
+[16:30:54] 100 территорий загружено
+[16:30:56] [connection] incoming connection: 8.43.121.57:62649 id: 0
+[16:30:56] [connection] incoming connection: 5.165.192.3:8311 id: 1
+[16:30:56] [join] Murder_Aimbot has joined the server (0:8.43.121.57)
+[16:30:56] [sv:dbg:network:connect] : connecting player (1) with address (5.165.192.3) ...
+[16:30:56] [sv:dbg:network:connect] : player (1) assigned key (3c0a505fe9fc9ce)
+[16:30:56] [join] Matvey_Og has joined the server (1:5.165.192.3)
+[16:30:56] [sv:dbg:network:receive] : player (1) identified (port:8871)
+[16:31:01] [Nex-AC debug] Dist: 1573.177368, dist set: 4469.033203, speed: 0, pos x, y, z: -301.203704, -1543.403442, 45.989498, old pos x, y, z: 0.000000, 0.000000, 0.500000
+[16:31:01] [Анти-чит] Срабатывание на 1 ID. Код причины: 002(2)
+[16:32:15] [chat] [Murder_Aimbot]: e
+[16:32:39] [Nex-AC debug] AC dialog: -1, dialogid: 24, listitem: -1, playerid: 1
+[16:32:39] [Анти-чит] Срабатывание на 1 ID. Код причины: 039
+[16:32:42] [Nex-AC debug] AC dialog: -1, dialogid: 24, listitem: -1, playerid: 1
+[16:32:42] [Анти-чит] Срабатывание на 1 ID. Код причины: 039
+[16:32:58] [chat] [Murder_Aimbot]: d
+[16:33:57] [sv:dbg:network:connect] : disconnecting player (1) ...
+[16:33:57] [part] Matvey_Og has left the server (1:0)
+[16:34:19] [connection] incoming connection: 5.165.192.3:8802 id: 1
+[16:34:20] [sv:dbg:network:connect] : connecting player (1) with address (5.165.192.3) ...
+[16:34:20] [sv:dbg:network:connect] : player (1) assigned key (3c0a5059168b0c6)
+[16:34:20] [join] Matvey_Og has joined the server (1:5.165.192.3)
+[16:34:20] [sv:dbg:network:receive] : player (1) identified (port:8602)
+[16:35:06] [server_log] save all. Time: 2 ms.
+[16:35:06] Unknown column 'odessa_storage' in 'field list'
+[16:36:39] [ac_fly] playerid: Matvey_Og, distance: 1112412928
+[16:36:42] [chat] [Matvey_Og]: fly
+[16:45:01] [chat] [Matvey_Og]: 1
+[16:45:49] [sv:dbg:network:connect] : disconnecting player (1) ...
+[16:45:49] [part] Matvey_Og has left the server (1:0)
+[16:47:52] [connection] incoming connection: 5.165.192.3:8605 id: 1
+[16:47:52] [sv:dbg:network:connect] : connecting player (1) with address (5.165.192.3) ...
+[16:47:52] [sv:dbg:network:connect] : player (1) assigned key (3c0a505f38fdfdc)
+[16:47:52] [join] Matvey_Og has joined the server (1:5.165.192.3)
+[16:47:52] [sv:dbg:network:receive] : player (1) identified (port:9082)
+[16:48:53] [debug] Run time error 4: "Array index out of bounds"
+[16:48:53] [debug]  Accessing element at index 6 past array upper bound 5
+[16:48:53] [debug] AMX backtrace:
+[16:48:53] [debug] #0 003b35d8 in public pc_cmd_buy (playerid=1, ... <1 argument>) at C:\Users\ded inside\Desktop\Новая папка\gamemodes\new.pwn:24898
+[16:48:53] [Pawn.CMD] HandleCommand: Call: amx_Exec(P6tagAMX:0x91567f0, Pi:0xffe4499c, i:311): Array index out of bounds (4)
+[16:48:55] [debug] Run time error 4: "Array index out of bounds"
+[16:48:55] [debug]  Accessing element at index 6 past array upper bound 5
+[16:48:55] [debug] AMX backtrace:
+[16:48:55] [debug] #0 003b35d8 in public pc_cmd_buy (playerid=1, ... <1 argument>) at C:\Users\ded inside\Desktop\Новая папка\gamemodes\new.pwn:24898
+[16:48:55] [Pawn.CMD] HandleCommand: Call: amx_Exec(P6tagAMX:0x91567f0, Pi:0xffe4499c, i:311): Array index out of bounds (4)
+[16:49:26] [debug] Run time error 4: "Array index out of bounds"
+[16:49:26] [debug]  Accessing element at index 6 past array upper bound 5
+[16:49:26] [debug] AMX backtrace:
+[16:49:26] [debug] #0 003b35d8 in public pc_cmd_buy (playerid=0, ... <1 argument>) at C:\Users\ded inside\Desktop\Новая папка\gamemodes\new.pwn:24898
+[16:49:26] [Pawn.CMD] HandleCommand: Call: amx_Exec(P6tagAMX:0x91567f0, Pi:0xffe4499c, i:311): Array index out of bounds (4)
+[16:49:28] [debug] Run time error 4: "Array index out of bounds"
+[16:49:28] [debug]  Accessing element at index 6 past array upper bound 5
+[16:49:28] [debug] AMX backtrace:
+[16:49:28] [debug] #0 003b35d8 in public pc_cmd_buy (playerid=0, ... <1 argument>) at C:\Users\ded inside\Desktop\Новая папка\gamemodes\new.pwn:24898
+[16:49:28] [Pawn.CMD] HandleCommand: Call: amx_Exec(P6tagAMX:0x91567f0, Pi:0xffe4499c, i:311): Array index out of bounds (4)
+[16:49:54] [connection] incoming connection: 136.169.169.31:43702 id: 2
+[16:49:54] [join] Sevochka_Bratek has joined the server (2:136.169.169.31)
+[16:49:59] [Nex-AC debug] Dist: 1573.177368, dist set: 4469.033203, speed: 0, pos x, y, z: -301.203704, -1543.403442, 45.989498, old pos x, y, z: 0.000000, 0.000000, 0.500000
+[16:49:59] [Анти-чит] Срабатывание на 2 ID. Код причины: 002(2)
