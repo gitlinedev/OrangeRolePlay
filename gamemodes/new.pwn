@@ -789,7 +789,7 @@ new NPC_ALL[30],
 	pDialogTimer[MAX_PLAYERS],
 	pDialogCurrectTime[MAX_PLAYERS],
 	WeatherServer,
-	capturezonespawn,
+	//capturezonespawn,
 	bool:animan[MAX_PLAYERS char],
 	avtobus_car_job[MAX_PLAYERS],
 	bool:pCBugging[MAX_PLAYERS],
@@ -1128,7 +1128,7 @@ enum P_DATA
 	pProgressDrugs,
 	pProgressAmmo,
 	pProgressCarGrabber,
-	pAntiCLMenu,
+	pCaptureManager,
 	pProgressSellGun,
 	pProgressCapture,
 	pPromoCodeUse,
@@ -1280,7 +1280,6 @@ enum
 	dialog_BAN,
 	dialog_ADMINS,
 	dialog_WARNTIME,
-	dialog_Vzaimodeystvienaalt,
 	dialog_SETSPAWN,
 	dialog_DONATE,
 	dialog_DONATE_1,
@@ -2278,6 +2277,8 @@ public OnGameModeInit()
 	//FMT
 	restartserver = 0;
 	BusinessUpdate = 0;
+
+	PointCapture = CreatePickup(1314, 23, 1510.0564,-1204.5079,14.9259, -1); // шахта закончить/начать 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=[ РАБОТЫ ]-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	MineClothes = CreatePickup(1275, 23, 2330.7954, -1453.4937, 1137.4415, -1); // шахта закончить/начать 
 	MinePoint_1 = CreatePickup(19133, 23, 2383.3367,-1440.9891,1137.3475, -1); // шахта место добычи
@@ -2393,7 +2394,7 @@ public OnPlayerConnect(playerid)
 	PreloadAnimLib(playerid,"BASEBALL");
 	//
 	ArmyStorageZone = CreateDynamicCircle(1567.5477,1823.2529, 3.0, 0, 0, -1);
-	capturezonespawn = CreateDynamicCube(1449.5,-1355, 1591.5, -1133, 850.0, 0, 0, -1);
+	//capturezonespawn = CreateDynamicCube(1449.5,-1355, 1591.5, -1133, 850.0, 0, 0, -1);
 
 	ClearPlayerData(playerid);
 
@@ -4181,17 +4182,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 	{
 		if(GetPlayerTargetPlayer(playerid) != INVALID_PLAYER_ID)
 		{
-	  		targplayer[playerid] = GetPlayerTargetPlayer(playerid);
-    	    new str_3[512];
-		    format(str_3,sizeof(str_3),"\
-		    1.Поздороваться\n\
-		    2.Передать Аптечку\n\
-		    3.Показать Пасспорт\n\
-			4.Показать Лицензии\n\
-			5.Показать Медицинскую Карту\n\
-			6.Показать Навоки Владения Оружием\n\
-			7.Передать Маску");
-		    return ShowPlayerDialog(playerid,dialog_Vzaimodeystvienaalt, DIALOG_STYLE_LIST, "Меню Взаимодействия", str_3, "Далее", "Закрыть");
+	  		ShowTargetMenu(playerid);
 		}
 	}
 	if(newkeys == 1 || PRESSED(1)) {
@@ -4866,6 +4857,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	business_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 	bl_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 	shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
+	capture_OnDialogResponse(playerid, dialogid, response);
 
 	switch(dialogid) 
 	{
@@ -6143,74 +6135,44 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				PI[playerid][pAutoSalonCar] = INVALID_VEHICLE_ID;
 		    }
 		}
-		case dialog_Vzaimodeystvienaalt:
+		case 3298:
 		{
 			if(!response) return 1;
 			if(response)
 			{
+				new Float:x,Float:y,Float:z;
+				GetPlayerPos(targplayer[0],x,y,z);
+				if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
+
 				switch(listitem)
 				{
 					case 0:
 					{
-					    new Float:x,Float:y,Float:z;
-						GetPlayerPos(targplayer[0],x,y,z);
-						if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
 						return SendRequestForPlayer(playerid, targplayer[0], 4);
 					}
 					case 1:
 					{
-    					new Float:x,Float:y,Float:z;
-						GetPlayerPos(targplayer[0],x,y,z);
-						if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
 						return SendRequestForPlayer(playerid, targplayer[0], 2);
 					}
 					case 2:
 					{
-						new Float:x,Float:y,Float:z;
-						GetPlayerPos(targplayer[0],x,y,z);
-						if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
 						return SendRequestForPlayer(playerid, targplayer[0], 9);
 					}
 					case 3:
 					{
-						new Float:x,Float:y,Float:z;
-						GetPlayerPos(targplayer[0],x,y,z);
-						if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
 						return SendRequestForPlayer(playerid, targplayer[0], 7);
 					}
 					case 4:
 					{
-						new Float:x,Float:y,Float:z;
-						GetPlayerPos(targplayer[0],x,y,z);
-						if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
 						return SendRequestForPlayer(playerid, targplayer[0], 6);
 					}
 					case 5:
 					{
-						new Float:x,Float:y,Float:z;
-						GetPlayerPos(targplayer[0],x,y,z);
-						if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
 						return SendRequestForPlayer(playerid, targplayer[0], 10);
 					}
 					case 6:
 					{
-						new Float:x,Float:y,Float:z;
-						GetPlayerPos(targplayer[0],x,y,z);
-						if(!PlayerToPoint(3.0, playerid, x,y,z)) return SCM(playerid, COLOR_GREY, !"Вы находетесь далеко друг от друга");
 						return SendRequestForPlayer(playerid, targplayer[0], 3);
-					}
-					case 7:
-					{
-						return 0;
-					}
-					case 8:
-					{
-						return 0;
-					}
-					case 9:
-					{
-						return 0;
-						//Сделать передачу денег
 					}
 				}
 			}
@@ -10118,7 +10080,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
 			}
 		}
-		case 3410: {
+		case 3410: 
+		{
 		    if(!response) return 1;
 			if(response) {
 			    SetPVarString(playerid, "namegr", inputtext);
@@ -11229,7 +11192,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	            PI[GetPVarInt(playerid, "uninviteid")][pProgressCarGrabber] = 0;
 	            PI[GetPVarInt(playerid, "uninviteid")][pProgressSellGun] = 0;
 	            PI[GetPVarInt(playerid, "uninviteid")][pProgressCapture] = 0;
-	            PI[GetPVarInt(playerid, "uninviteid")][pAntiCLMenu] = 0;
+	            PI[GetPVarInt(playerid, "uninviteid")][pCaptureManager] = 0;
 				SetPlayerSkinAC(GetPVarInt(playerid, "uninviteid"),PI[GetPVarInt(playerid, "uninviteid")][pSkin]);
 				SetPlayerColorEx(GetPVarInt(playerid, "uninviteid"));
 				PI[GetPVarInt(playerid, "uninviteid")][data_MEDCARD] = 0;
@@ -11500,10 +11463,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
       				case 10: ShowPlayerDialog(playerid, 7508, DIALOG_STYLE_INPUT, "{ee3366}Снять выговор в оффлайн", "{FFFFFF}Введите имя игрока в поле ниже\nПример: Ivan_Bober", "Снять", "Отмена");
       				case 11: ShowPlayerDialog(playerid, 7510, DIALOG_STYLE_INPUT, "{ee3366}Изменить внешность", "{FFFFFF}Введите ID игрока:", "Изменить", "Отмена");
       				case 12: ShowPlayerDialog(playerid, 7511, DIALOG_STYLE_INPUT, "{ee3366}Изменить группу", "{FFFFFF}Введите ID игрока:", "Изменить", "Отмена");
-			  		case 13: ShowPlayerDialog(playerid, 7503, DIALOG_STYLE_MSGBOX, !"{ee3366}Расформировать организацию", "{FFFFFF}Вы подтверждаете расормирование организации?\nДействие нельзя будет отменить.", "Продолжить", "Отмена");
-			  		case 14: callcmd::storage(playerid);
-			  		case 15: ShowPlayerDialog(playerid, 8416, DIALOG_STYLE_INPUT, "{ee3366}Выдать  AntiWar", "{FFFFFF}Введите ID игрока:", "Выдать", "Отмена");
-			  		case 16: ShowPlayerDialog(playerid, 8417, DIALOG_STYLE_INPUT, "{ee3366}Снять AntiWar", "{FFFFFF}Введите ID игрока:", "Снять", "Отмена");
+					case 13: ShowPlayerDialog(playerid, 8416, DIALOG_STYLE_INPUT, "{ee3366}Назначить смотрящего", "{FFFFFF}Введите ID игрока:", "Выдать", "Отмена");
+			  		case 14: ShowPlayerDialog(playerid, 8417, DIALOG_STYLE_INPUT, "{ee3366}Снять смотрящего", "{FFFFFF}Введите ID игрока:", "Снять", "Отмена");
+			  		case 15: ShowPlayerDialog(playerid, 7503, DIALOG_STYLE_MSGBOX, !"{ee3366}Расформировать организацию", "{FFFFFF}Вы подтверждаете расормирование организации?\nДействие нельзя будет отменить.", "Продолжить", "Отмена");
 			    }
 			}
       	}
@@ -11816,7 +11778,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    if(!response) return 1;
 			if(response) callcmd::setskin(playerid,inputtext);
 		}
-		case 8416: 
+		/*case 8416: 
 		{
 		    if(!response) return 1;
 			if(response) callcmd::giveantivar(playerid,inputtext);
@@ -11825,6 +11787,71 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	  	{
 		    if(!response) return 1;
 			if(response) callcmd::ungiveantivar(playerid,inputtext);
+		}*/
+		case 8416:
+		{
+			if(!response) return 1;
+			if(response)
+			{
+				new id = strval(inputtext);
+				if(!IsPlayerConnected(id))return  SCM(playerid, COLOR_GREY, !"Игрок не в сети");
+				if(!IsPlayerLogged{id})return  SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
+				if(PI[playerid][pMember] != PI[id][pMember]) return SCM(playerid, COLOR_GREY, !"Данный игрок не состоит в Вашей организации");
+				if(PI[id][pCaptureManager] == 1) return SCM(playerid, COLOR_GREY, !"Данный игрок уже занимает должность смотрящего за стрелами");
+
+
+				new Cache: result, query[68];
+
+				mysql_format(mysql, query, sizeof query, "SELECT * FROM accounts WHERE member='%d' AND CaptureManager = '1'", PI[playerid][pMember]);
+				result = mysql_query(mysql, query, true);
+
+				if(cache_num_rows() >= 3)
+				{	
+					SendClientMessage(playerid, COLOR_GREY, !"Максимум можно иметь 3 смотрящих за захватом территории");
+				}
+				cache_delete(result);
+
+
+				static name[24], name_player[24];
+				SetString(name, NameRang(playerid));
+				name = NameRang(playerid);
+
+				SetString(name_player, NameRang(id));
+				name_player = NameRang(id);
+				
+				SendFractionMessagef(PI[playerid][pMember], 0x69b867FF, "[R] %s %s[%d] назначил смотрящим за стрелой %s %s[%d]",\
+					name, getName(playerid), playerid,\
+					name_player, getName(id), id);
+				
+				PI[id][pCaptureManager] = 1;
+
+			}
+		}
+		case 8417:
+		{
+			if(!response) return 1;
+			if(response)
+			{
+				new id = strval(inputtext);
+				if(!IsPlayerConnected(id))return  SCM(playerid, COLOR_GREY, !"Игрок не в сети");
+				if(!IsPlayerLogged{id})return  SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
+				if(PI[playerid][pMember] != PI[id][pMember]) return SCM(playerid, COLOR_GREY, !"Данный игрок не состоит в Вашей организации");
+				if(PI[id][pCaptureManager] == 0) return SCM(playerid, COLOR_GREY, !"Данный игрок не занимает должность смотрящего за стрелами");
+
+				static name[24], name_player[24];
+				SetString(name, NameRang(playerid));
+				name = NameRang(playerid);
+
+				SetString(name_player, NameRang(id));
+				name_player = NameRang(id);
+				
+				SendFractionMessagef(PI[playerid][pMember], 0x69b867FF, "[R] %s %s[%d] назнал смотрящим за стрелой %s %s[%d]",\
+					name, getName(playerid), playerid,\
+					name_player, getName(id), id);
+				
+				PI[id][pCaptureManager] = 0;
+
+			}
 		}
 		case 7509: 
 		{
@@ -11933,7 +11960,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	            PI[playerid][pProgressCarGrabber] = 0;
 	            PI[playerid][pProgressSellGun] = 0;
 	            PI[playerid][pProgressCapture] = 0;
-	            PI[playerid][pAntiCLMenu] = 0;
+	            PI[playerid][pCaptureManager] = 0;
 				SetPlayerSkinAC(playerid,PI[playerid][pSkin]);
 				SetPlayerColorEx(playerid);
 				if(PI[playerid][pMember] == 2 && PI[playerid][pRang] <= 3 && PI[playerid][data_MILITARY] == 0) 
@@ -12572,7 +12599,7 @@ callback: LoadPlayerData(playerid)
 		cache_get_field_content(0, "PromoCodeUse", temp), PI[playerid][pPromoCodeUse] = strval (temp);
 	    cache_get_field_content(0, "ProgressDrugs", temp), PI[playerid][pProgressDrugs] = strval (temp);
 	    cache_get_field_content(0, "ProgressCarGrabber", temp), PI[playerid][pProgressCarGrabber] = strval (temp);
-	    cache_get_field_content(0, "AntiCLMenu", temp), PI[playerid][pAntiCLMenu] = strval (temp);
+	    cache_get_field_content(0, "CaptureManager", temp), PI[playerid][pCaptureManager] = strval (temp);
 	    cache_get_field_content(0, "ProgressSellGun", temp), PI[playerid][pProgressSellGun] = strval (temp);
         cache_get_field_content(0, "ProgressCapture", temp), PI[playerid][pProgressCapture] = strval (temp);
 
@@ -13149,12 +13176,14 @@ callback: UnbanAccount(playerid,name[])
 	else SCM(playerid, COLOR_GREY, !"Данный аккаунт не найден в базе данных");
 	return 1;
 }
-callback: SecondTimer() {
+callback: SecondTimer() 
+{
 	global_minute++;
   	new hour_time,minuite_time, second_time, Year, Month, Day,month[10];
   	gettime(hour_time,minuite_time, second_time);
 	getdate(Year, Month, Day);
-	switch(Month) {
+	switch(Month) 
+	{
 		case 1: month = "01";
 		case 2: month = "02";
 		case 3: month = "03";
@@ -13168,738 +13197,20 @@ callback: SecondTimer() {
 		case 11: month = "11";
 		case 12: month = "12";
 	}
-    if(GangWarStatus == 1)
+	capture_SecondTimer();
+	if(global_minute == 60) 
 	{
-	    WarTimeSec--;
-	    if(WarTimeSec == 0 && WarTimeMin != 0)
-		{
-			WarTimeSec = 59;
-			WarTimeMin--;
-			for(new i = 0; i < MAX_PLAYERS; i++) {
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) {
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
-				}
-			}
-		}
-		if(WarTimeSec == 0 && WarTimeMin == 0) {
-			new plus1 = 0,plus2 = 0;
-			for(new i = 0; i < MAX_PLAYERS; i++) {
-				if(PI[i][pMember] == Command[0]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[0] == PI[i][pMember]) plus1 = 1;
-				if(PI[i][pMember] == Command[1]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[1] == PI[i][pMember]) plus2 = 1;
-			}
-			if(plus1 != 0) {
-				if(plus2 != 0) {
-					WarTimeMin = 1;
-					WarTimeSec = 59;
-					GangWarStatus = 2;
-				}
-			}
-			for(new i = 0; i < MAX_PLAYERS; i++) {
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) {
-					SCM(i, COLOR_TOMATO, !"На территории остались участники вражеской ОПГ, стрела продлена на 2 минуты");
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-				}
-			}
-			if(GangWarStatus != 2) 
-			{
-				if(CommandKill[0] > CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							gz_info[WarZone][gzopg] = Command[0];
-							new col;
-							switch(Command[0]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							SaveGZ(Command[0], WarZone);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-				else if(CommandKill[0] < CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							GangZoneHideForPlayer(i, WarZone);
-							new col;
-							switch(Command[1]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась неуспешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-			}
-		}
-		for(new i = 0; i < MAX_PLAYERS; i++) 
-		{
-			if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-			{
-				new time[12];
-				if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-				else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-				cef_emit_event(i, "capture-time", CEFSTR(time));
-				cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
-			}
-		}
-	}
-	if(GangWarStatus == 2) 
-	{ //продление 1
-		WarTimeSec--;
-		for(new i = 0; i < MAX_PLAYERS; i++) 
-		{
-			if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-			{
-				new time[12];
-				if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-				else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-				cef_emit_event(i, "capture-time", CEFSTR(time));
-				cef_emit_event(i, "capture-text", CEFSTR("продление 1"));
-			}
-		}
-	    if(WarTimeSec == 0 && WarTimeMin != 0) 
-		{
-			WarTimeSec = 59;
-			WarTimeMin--;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 1"));
-				}
-			}
-		}
-		if(WarTimeSec == 0 && WarTimeMin == 0) 
-		{
-			new plus1 = 0,plus2 = 0;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(PI[i][pMember] == Command[0]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[0] == PI[i][pMember]) plus1 = 1;
-				if(PI[i][pMember] == Command[1]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[1] == PI[i][pMember]) plus2 = 1;
-			}
-			if(plus1 != 0) 
-			{
-				if(plus2 != 0) 
-				{
-					WarTimeMin = 1;
-					WarTimeSec = 59;
-					GangWarStatus = 3;
-				}
-			}
-			for(new i = 0; i < MAX_PLAYERS; i++)
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					SCM(i, COLOR_TOMATO, !"На территории остались участники вражеской ОПГ, стрела продлена на 2 минуты");
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 2"));
-				}
-			}
-			if(GangWarStatus != 3) 
-			{
-				if(CommandKill[0] > CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							gz_info[WarZone][gzopg] = Command[0];
-							new col;
-							switch(Command[0]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							SaveGZ(Command[0], WarZone);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-				else if(CommandKill[0] < CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++)
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							cef_emit_event(i, "capture-text", CEFSTR("продление 1"));
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							GangZoneHideForPlayer(i, WarZone);
-							new col;
-							switch(Command[1]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась неуспешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-			}
-		}
-	}
-	if(GangWarStatus == 3) 
-	{ //продление 2
-		WarTimeSec--;
-		for(new i = 0; i < MAX_PLAYERS; i++) 
-		{
-			if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-			{
-				new time[12];
-				if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-				else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-				cef_emit_event(i, "capture-time", CEFSTR(time));
-				cef_emit_event(i, "capture-text", CEFSTR("продление 2"));
-			}
-		}
-	    if(WarTimeSec == 0 && WarTimeMin != 0) 
-		{
-			WarTimeSec = 59;
-			WarTimeMin--;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 2"));
-				}
-			}
-		}
-		if(WarTimeSec == 0 && WarTimeMin == 0) 
-		{
-			new plus1 = 0,plus2 = 0;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(PI[i][pMember] == Command[0]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[0] == PI[i][pMember]) plus1 = 1;
-				if(PI[i][pMember] == Command[1]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[1] == PI[i][pMember]) plus2 = 1;
-			}
-			if(plus1 != 0) 
-			{
-				if(plus2 != 0) 
-				{
-					WarTimeMin = 1;
-					WarTimeSec = 59;
-					GangWarStatus = 4;
-				}
-			}
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					SCM(i, COLOR_TOMATO, !"На территории остались участники вражеской ОПГ, стрела продлена на 2 минуты");
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-				}
-			}
-			if(GangWarStatus != 4)
-			{
-				if(CommandKill[0] > CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							gz_info[WarZone][gzopg] = Command[0];
-							new col;
-							switch(Command[0]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							SaveGZ(Command[0], WarZone);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-				else if(CommandKill[0] < CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							GangZoneHideForPlayer(i, WarZone);
-							new col;
-							switch(Command[1]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась неуспешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-			}
-		}
-	}
-	if(GangWarStatus == 4) 
-	{ //продление 3
-		WarTimeSec--;
-		for(new i = 0; i < MAX_PLAYERS; i++) 
-		{
-			if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-			{
-				new time[12];
-				if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-				else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-				cef_emit_event(i, "capture-time", CEFSTR(time));
-				cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-			}
-		}
-	    if(WarTimeSec == 0 && WarTimeMin != 0) {
-			WarTimeSec = 59;
-			WarTimeMin--;
-			for(new i = 0; i < MAX_PLAYERS; i++) {
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) {
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-				}
-			}
-		}
-		if(WarTimeSec == 0 && WarTimeMin == 0) 
-		{
-			new plus1 = 0,plus2 = 0;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(PI[i][pMember] == Command[0]) 
-				{
-					if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[0] == PI[i][pMember]) plus1 = 1;
-					
-				}
-				if(PI[i][pMember] == Command[1]) 
-				{
-					if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[1] == PI[i][pMember]) plus2 = 1;
-					
-				}
-			}
-			if(plus1 != 0) 
-			{
-				if(plus2 != 0) 
-				{
-					WarTimeMin = 1;
-					WarTimeSec = 59;
-					GangWarStatus = 5;
-				}
-			}
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					SCM(i, COLOR_TOMATO, !"На территории остались участники вражеской ОПГ, стрела продлена на 2 минуты");
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 4"));
-				}
-			}
-			if(GangWarStatus != 5) 
-			{
-				if(CommandKill[0] > CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							gz_info[WarZone][gzopg] = Command[0];
-							new col;
-							switch(Command[0]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							SaveGZ(Command[0], WarZone);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-				else if(CommandKill[0] < CommandKill[1])
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							cef_emit_event(i, "capture-text", CEFSTR("продление 4"));
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							GangZoneHideForPlayer(i, WarZone);
-							new col;
-							switch(Command[1]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась неуспешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-			}
-		}
-	}
-	if(GangWarStatus == 5) 
-	{ //продление 1
-		WarTimeSec--;
-		for(new i = 0; i < MAX_PLAYERS; i++) 
-		{
-			if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-			{
-				new time[12];
-				if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-				else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-				cef_emit_event(i, "capture-time", CEFSTR(time));
-				cef_emit_event(i, "capture-text", CEFSTR("продление 5"));
-			}
-		}
-	    if(WarTimeSec == 0 && WarTimeMin != 0) 
-		{
-			WarTimeSec = 59;
-			WarTimeMin--;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 5"));
-				}
-			}
-		}
-		if(WarTimeSec == 0 && WarTimeMin == 0)
-		{
-			new plus1 = 0,plus2 = 0;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(PI[i][pMember] == Command[0]) 
-				{
-					if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[0] == PI[i][pMember]) plus1 = 1;
-					
-				}
-				if(PI[i][pMember] == Command[1]) 
-				{
-					if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[1] == PI[i][pMember]) plus2 = 1;
-					
-				}
-			}
-			if(plus1 != 0) 
-			{
-				if(plus2 != 0) 
-				{
-					WarTimeMin = 1;
-					WarTimeSec = 59;
-					GangWarStatus = 6;
-				}
-			}
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					SCM(i, COLOR_TOMATO, !"На территории остались участники вражеской ОПГ, стрела продлена на 2 минуты");
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 5"));
-				}
-			}
-			if(GangWarStatus != 6) 
-			{
-				if(CommandKill[0] > CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							gz_info[WarZone][gzopg] = Command[0];
-							new col;
-							switch(Command[0]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							SaveGZ(Command[0], WarZone);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-				else if(CommandKill[0] < CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							cef_emit_event(i, "capture-text", CEFSTR("продление 5"));
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							GangZoneHideForPlayer(i, WarZone);
-							new col;
-							switch(Command[1]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась неуспешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-						}
-					}
-					GangWarStatus = 0;
-				}
-			}
-		}
-	}
-	if(GangWarStatus == 6) 
-	{
-	    WarTimeSec--;
-		for(new i = 0; i < MAX_PLAYERS; i++) 
-		{
-			if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-			{
-				new time[12];
-				if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-				else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-				cef_emit_event(i, "capture-time", CEFSTR(time));
-				cef_emit_event(i, "capture-text", CEFSTR("продление 4"));
-			}
-		}
-	    if(WarTimeSec == 0 && WarTimeMin != 0) 
-		{
-			WarTimeSec = 59;
-			WarTimeMin--;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-			{
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-				{
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 4"));
-				}
-			}
-		}
-		if(WarTimeSec == 0 && WarTimeMin == 0) 
-		{
-		    if(CommandKill[0] == CommandKill[1]) 
-			{
-				for(new i = 0; i < MAX_PLAYERS; i++) 
-				{
-				    if(PI[i][pMember] == 5 || PI[i][pMember] == 6 || PI[i][pMember] == 7) 
-					{
-						cef_emit_event(i, "capture-text", CEFSTR("продление 4"));
-				    	GangZoneHideForPlayer(i, CaptZone);
-				    	GangZoneStopFlashForPlayer(i, WarZone);
-				    	gz_info[WarZone][gzopg] = Command[0];
-				    	new col;
-						switch(Command[0]) 
-						{
-						    case 5: col = 0x663399BB;
-						    case 6: col = 0x66CCFFBB;
-						    case 7: col = 0x339933AA;
-						}
-				    	GangZoneHideForPlayer(i, WarZone);
-				    	GangZoneShowForPlayer(i, WarZone, col);
-						ClearKillFeed(i);
-						cef_emit_event(i, "hide-capture");
-						cef_emit_event(i, "clear-kill-list");
-						SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-				    }
-				}
-				GangWarStatus = 0;
-			}
-			else {
-			    if(CommandKill[0] > CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-					    if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-					    	GangZoneHideForPlayer(i, CaptZone);
-					    	GangZoneStopFlashForPlayer(i, WarZone);
-					    	gz_info[WarZone][gzopg] = Command[0];
-					    	new col;
-							switch(Command[0]) 
-							{
-							    case 5: col = 0x663399BB;
-							    case 6: col = 0x66CCFFBB;
-							    case 7: col = 0x339933AA;
-							}
-					    	GangZoneHideForPlayer(i, WarZone);
-					    	GangZoneShowForPlayer(i, WarZone, col);
-					    	SaveGZ(Command[0], WarZone);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-					    }
-					}
-					GangWarStatus = 0;
-			    }
-			    else if(CommandKill[0] < CommandKill[1]) 
-				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
-					{
-					    if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							cef_emit_event(i, "capture-text", CEFSTR("продление 1"));
-					    	GangZoneHideForPlayer(i, CaptZone);
-					    	GangZoneStopFlashForPlayer(i, WarZone);
-					    	GangZoneHideForPlayer(i, WarZone);
-					    	new col;
-							switch(Command[1]) 
-							{
-							    case 5: col = 0x663399BB;
-							    case 6: col = 0x66CCFFBB;
-							    case 7: col = 0x339933AA;
-							}
-					    	GangZoneHideForPlayer(i, WarZone);
-					    	GangZoneShowForPlayer(i, WarZone, col);
-					    	ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась неуспешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
-					    }
-					}
-					GangWarStatus = 0;
-			    }
-			}
-		}
-	}
-	if(global_minute == 60) {
 	    new hour, minute, second;
 	    gettime(hour, minute, second);
-	    switch(minute) {
-		    case 2: {
-				for(new b = 0; b < TotalBusiness; b++) {
+	    switch(minute) 
+		{
+		    case 2: 
+			{
+				for(new b = 0; b < TotalBusiness; b++) 
+				{
 					if(BizInfo[b][bOwned] == 0) continue;
 					if(BizInfo[b][bDays] == 0) continue;
-					if(BizInfo[b][bProduct] < 200) continue;
-					new tovar = RandomEX(10, 200),money;
-					switch(BizInfo[b][data_TYPE]) {
-						case 1:money = tovar*40;
-						case 2:money = tovar*70;
-						case 3:money = tovar*62;
-						case 4:money = tovar*82;
-						case 5:money = tovar*61;
-						case 6:money = tovar*62;
-					}
-					BizInfo[b][bMoney] += money;
-					BizInfo[b][bProduct] -= tovar;
+					BizInfo[b][bProduct]--;
 					UpdateBusinessData(b);
 					SaveBusinessData(b);
 				}
@@ -17448,127 +16759,6 @@ CMD:setgz(playerid)
  	ShowPlayerDialog(playerid, dialog_SETGZ, DIALOG_STYLE_LIST, "{ee3366}Выберите ОПГ", "1. Скинхеды\n2. Гопота\n3. Кавказцы", "Далее", "Закрыть");
 	return 1;
 }
-cmd:capture(playerid) 
-{
-    if(!IsPlayerOPG(playerid))  return SCM(playerid, COLOR_GREY, !"Вы не состоите в ОПГ");
-    if(PI[playerid][pRang] < 7) return SCM(playerid, COLOR_GREY, !"Данную команду можно использовать с 7-го ранга");
-	new gz = GetPlayerGangZone(playerid);
-	if(gz == -1) return SCM(playerid, COLOR_GREY, !"Вы не находитесь ни в одной из зон");
-    if(GetPVarInt(playerid,"Counting_Capture") > gettime()) return SCM(playerid, COLOR_GREY, !"Команду можно использовать раз в 1 минуту");
-    SetPVarInt(playerid,"Counting_Capture",gettime() + 59);
-    new hour, minute, second;
-    gettime(hour, minute, second);
-    if (capturetime == 1) 
-	{
-		if (!((hour >= 12 && hour <= 19) && minute == 0) &&
-			!(hour >= 20 && hour <= 23) &&
-			!(hour >= 0 && hour <= 9))
-		{
-			return SCM(playerid, COLOR_GREY, !"Захват территорий для вашей ОПГ доступен в 12:00, 13:00, 14:00, 15:00, 16:00, 17:00, 18:00, 20:00, 21:00, 22:00, 23:00");
-		}
-	}
-	if(GangWarStatus == 1) return SCM(playerid, COLOR_GREY, !"В данный момент уже идет война за территорию");
-    if(gz_info[gz][gzopg] == PI[playerid][pMember]) return SCM(playerid, COLOR_GREY, !"Вы не можете захватить свою территорию");
-
-	switch(gz_info[gz][gzopg]) 
-	{
-	    case 5: if(m_skinhead > 1) return SCM(playerid, COLOR_GREY, !"В данной ОПГ замороженны захваты территорий");
-		case 6: if(m_gopota > 1) return SCM(playerid, COLOR_GREY, !"В данной ОПГ замороженны захваты территорий");
-		case 7: if(m_kavkaz > 1) return SCM(playerid, COLOR_GREY, !"В данной ОПГ замороженны захваты территорий");
-	}
-	switch(PI[playerid][pMember]) 
-	{
-	    case 5: if(m_skinhead > 1) return SCM(playerid, COLOR_GREY, !"В Вашей ОПГ замороженны захваты территорий");
-		case 6: if(m_gopota > 1) return SCM(playerid, COLOR_GREY, !"В Вашей ОПГ замороженны захваты территорий");
-		case 7: if(m_kavkaz > 1) return SCM(playerid, COLOR_GREY, !"В Вашей ОПГ замороженны захваты территорий");
-	}
-    if(gz_info[gz][gzid] == 101) return 1;
-
-    new warname[15];
-	if(gz_info[gz][gzopg] == 5) warname = "'Скинхеды'";
-	if(gz_info[gz][gzopg] == 6) warname = "'Гопота'";
-	if(gz_info[gz][gzopg] == 7) warname = "'Кавказцы'";
-
-	PI[playerid][pCaptureValue]++;
-	PI[playerid][pProgressCapture]+= 1;
-	GangWarStatus = 1;
-	//
-	WarTimeMin = 10;
-	WarTimeSec = 01;
-	WarZone = gz;
-	//
-	CommandKill[0]= 0;
-	CommandKill[1]= 0;
-	Command[0] = PI[playerid][pMember];
-	Command[1] = gz_info[gz][gzopg];
-
-	static name[24];
-	SetString(name, NameRang(playerid));
-	name = NameRang(playerid);
-
-	new str[145];
-	switch(PI[playerid][pMember]) 
-	{
-     	case 5:format(str,sizeof(str),"%s {3377CC}%s[%d] {3377CC}(%s){FFFF00} инициировал захват территории {3377CC}(%s)", name, getName(playerid), playerid, Fraction_Name[PI[playerid][pMember]], warname);
-   		case 6:format(str,sizeof(str),"%s {3377CC}%s[%d] {3377CC}(%s){FFFF00} инициировал захват территории {3377CC}(%s)", name, getName(playerid), playerid, Fraction_Name[PI[playerid][pMember]], warname);
-	    case 7:format(str,sizeof(str),"%s {3377CC}%s[%d] {3377CC}(%s){FFFF00} инициировал захват территории {3377CC}(%s)", name, getName(playerid), playerid, Fraction_Name[PI[playerid][pMember]], warname);
-	}
-    static name_org[15], nameorg[15];
-    switch(Command[0]) 
-	{
-        case 5: name_org = "Скинхеды";
-        case 6: name_org = "Гопота";
-        case 7: name_org = "Кавказцы";
-    }
-    switch(Command[1]) 
-	{
-        case 5: nameorg = "Скинхеды";
-        case 6: nameorg = "Гопота";
-        case 7: nameorg = "Кавказцы";
-    }
-	SCM(playerid, COLOR_YELLOW, !"За инициацию захвата территории Вы получите вознаграждение в PayDay"); 
-	foreach(new i:Player) 
-	{
-	    if(IsPlayerOPG(i)) 
-		{
-			if(PI[i][pMember] == Command[0]) 
-			{
-				SCM(i, COLOR_YELLOW, str);
-				SCM(i, COLOR_YELLOW,"Территория отмечена у Вас на мини-карте красным (мигающим) прямоугольником");
-				SCM(i, COLOR_YELLOW,"Место стрельбы отмечено у Вас на мини-карте красным (не мигающим!) прямоугольником в южной части карты");
-				SCM(i, COLOR_YELLOW,"Используйте команду {3377CC}/cteam{FFFF00}, чтобы посмотреть список участников своей ОПГ на территории стрелы");
-				cef_emit_event(i, "show-capture");
-				cef_emit_event(i, "capture-score", CEFINT(CommandKill[0]), CEFINT(CommandKill[1]));
-				cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
-				cef_emit_event(i, "capture-info-name", CEFSTR(name_org), CEFSTR(nameorg));
-				cef_emit_event(i, "show_kill_list");
-				GangZoneFlashForPlayer(i, gz, 0xFF000055);	
-			}
-			if(PI[i][pMember] == Command[1])
-			{
-				SCM(i, COLOR_YELLOW, str);
-				SCM(i, COLOR_YELLOW,"Территория отмечена у Вас на мини-карте красным (мигающим) прямоугольником");
-				SCM(i, COLOR_YELLOW,"Место стрельбы отмечено у Вас на мини-карте красным (не мигающим!) прямоугольником в южной части карты");
-				SCM(i, COLOR_YELLOW,"Используйте команду {3377CC}/cteam{FFFF00}, чтобы посмотреть список участников своей ОПГ на территории стрелы");
-				cef_emit_event(i, "show-capture");
-				cef_emit_event(i, "capture-score", CEFINT(CommandKill[0]), CEFINT(CommandKill[1]));
-				cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
-				cef_emit_event(i, "capture-info-name", CEFSTR(name_org), CEFSTR(nameorg));
-				cef_emit_event(i, "show_kill_list");
-				GangZoneFlashForPlayer(i, gz, 0xFF000055);
-			}
-		}
-	}
-	for(new g; g < totalgz; g++) 
-	{
-	    if(gz_info[g][gzid] == 101) 
-		{
-			CaptZone = GangZoneCreate(gz_info[g][gzminx], gz_info[g][gzminy], gz_info[g][gzmaxx], gz_info[g][gzmaxy]);
-			foreach(new i:Player) if(PI[i][pMember] >= 5 && PI[i][pMember] <= 7) GangZoneShowForPlayer(i, g, 0xFF000055);
-	    }
-	}
-	return 1;
-}
 stock SaveGangZone(gzopg1, gz) 
 {
 	return mysql_tqueryf(mysql,"UPDATE `gangzone` SET `gzopg` = '%d' WHERE `gzid` = '%d'", gzopg1, gz_info[gz][gzid]);
@@ -18777,33 +17967,13 @@ stock open_lmenugos(playerid) {
 	{6dbdd8}16. Меню Собеседований");
 	return ShowPlayerDialog(playerid, 7500, DIALOG_STYLE_LIST, "{ee3366}Меню лидера", dialog, "Выбрать", "Отмена");
 }
-stock open_lmenuopg(playerid) 
-{
-	new dialog[712];
-	format(dialog,sizeof(dialog),
-    "{e6e69c}1. Управление группами\n\
-	{e6e69c}2. Список всех участников организации\n\
-	{e6e69c}3. Чёрный список\n\
-	{e6e69c}4. Автопарк организации\n\
-	{3CB371}5. Принять в организацию\n\
-	{3CB371}6. Уволить из организации\n\
-	{3CB371}7. Уволить из огранизации оффлайн\n\
-	{3CB371}8. Выдать выговор\n\
-	{3CB371}9. Выдать выговор оффлайн\n\
-	{3CB371}10. Снять выговор\n\
-	{3CB371}11. Снять выговор оффлайн\n\
-	{3CB371}12. Изменить внешность\n\
-	{3CB371}13. Изменить группу\n\
-	{6dbdd8}14. Расформировать организацию");
-	return ShowPlayerDialog(playerid, 7501, DIALOG_STYLE_LIST, "{ee3366}Меню лидера", dialog, "Выбрать", "Отмена");
-}
 alias:lmenu("lm", "leadersmenu", "leadersm");
 cmd:lmenu(playerid) 
 {
     if(PI[playerid][pRang] < 9) return SCM(playerid, COLOR_GREY, !"Данная команда доступна лидерам организаций и их заместителям");
 
     if(PI[playerid][pMember] == 1 || PI[playerid][pMember] == 2 || PI[playerid][pMember] == 3 || PI[playerid][pMember] == 4) return open_lmenugos(playerid);
-    if(PI[playerid][pMember] == 5 || PI[playerid][pMember] == 6 || PI[playerid][pMember] == 7) return open_lmenuopg(playerid);
+    if(PI[playerid][pMember] == 5 || PI[playerid][pMember] == 6 || PI[playerid][pMember] == 7) return ShowLMenu_OPG(playerid);
 	return 1;
 }
 CMD:offuninvite(playerid,params[]) 
@@ -19812,9 +18982,8 @@ callback: SetGroupPlayer(playerid) {
 	static name2[24];
 	SetString(name2, NameRang(GetPVarInt(playerid, "idg")));
 	name2 = NameRang(GetPVarInt(playerid, "idg"));
-	new str[145];
-	format(str,sizeof(str),"[R] %s %s[%d] включил %s %s[%d] в группу ('%s')",name,getName(playerid),playerid,name2,PI[GetPVarInt(playerid, "idg")][pName], GetPVarInt(playerid, "idg"), PI[GetPVarInt(playerid, "idg")][pGroupName]);
-	foreach(new q:Player) if(PI[q][pMember] == PI[playerid][pMember]) SCM(q, 0x69b867FF, str);
+	SendFractionMessagef(PI[playerid][pMember], 0x69b867FF, "[R] %s %s[%d] включил %s %s[%d] в группу ('%s')",name,getName(playerid),playerid,name2,PI[GetPVarInt(playerid, "idg")][pName], GetPVarInt(playerid, "idg"), PI[GetPVarInt(playerid, "idg")][pGroupName]);
+
 	if(PI[GetPVarInt(playerid, "idg")][pRang] < 10)
 	{
 		if(PI[GetPVarInt(playerid, "idg")][pSex] == 1)
@@ -20147,7 +19316,7 @@ public OnPlayerLeaveDynamicArea(playerid, areaid)
 		KillTimer(TimetTheftCartridges[playerid]);
 		cef_emit_event(playerid, "hide-ammo-notify");
 	}
-	if(areaid == capturezonespawn) 
+	/*if(areaid == capturezonespawn) 
 	{
 		if(GangWarStatus > 0) 
 		{
@@ -20179,32 +19348,7 @@ public OnPlayerLeaveDynamicArea(playerid, areaid)
 				return 1;
 		    }
 	    }
-	}
-	return 1;
-}
-CMD:cteam(playerid, params[]) 
-{
-	new string[1048], name[115], bugfix = 0;
-	for(new i = 0; i < MAX_PLAYERS; i++)
-	{
-		if(!IsPlayerConnected(i)) continue;
-		if(PI[i][pMember] == PI[playerid][pMember]) 
-		{
-			if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) 
-			{
-				SetString(name, NameRang(i));
-				name = NameRang(i);
-				format(string,sizeof(string),"%s%s[%d]\t\t%d(%s)\t\t%d пинг\n", string, PI[i][pName], i, PI[i][pRang], name, GetPlayerPing(i));
-			}
-			bugfix = 1;
-		}
-	}
-	if(bugfix == 0) ShowPlayerDialog(playerid,0, DIALOG_STYLE_MSGBOX, !"{ee3366}Зона захвата", "На территории захвата нет игроков.", "Закрыть", "");
-	else {
-		new str_1[512*2];
-		format(str_1,sizeof(str_1),"Имя\tРанг\tГруппа\tPing\n%s",string);
-		ShowPlayerDialog(playerid,0, DIALOG_STYLE_TABLIST_HEADERS, "{ee3366}Зона захвата", str_1, "Закрыть", "");
-	}
+	}*/
 	return 1;
 }
 callback: setleaderskin(playerid) {
@@ -24736,36 +23880,6 @@ CMD:vc(playerid, params[])
     SetPVarInt(playerid, "vrchat",gettime()+1);
     return 1;
 }
-CMD:giveantivar(playerid, params[])
-{
-	if(PI[playerid][pRang] < 9) return SCM(playerid, COLOR_GREY, !"Данная команда Вам недоступна");
-	if(sscanf(params,"u",params[0])) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /giveantivar [ID игрока]");
-	if(!IsPlayerConnected(params[0]))return  SCM(playerid, COLOR_GREY, !"Игрок не в сети");
-	if(!IsPlayerLogged{params[0]}) return SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
-	if(PI[params[0]][pMember] == 0) return SCM(playerid, COLOR_GREY, !"Данный игрок не состоит в Вашей организации");
-	if(PI[playerid][pMember] != PI[params[0]][pMember]) return SCM(playerid, COLOR_GREY, !"Данный игрок не состоит в Вашей организации");
-	if(PI[params[0]][pLeader] != 0) return SCM(playerid, COLOR_GREY, !"Нельзя применить к лидеру");
-    PI[params[0]][pAntiCLMenu] = 1;
-	SCMf(params[0], COLOR_TOMATO, "Вам был выдал вам запрет на учатсие в захвате территории");
-	SCMf(playerid, COLOR_LIGHTYELLOW, "Вы выдали  запрет на учатсие в захвате территории игроку %s",getName(params[0]));
-	cef_emit_event(playerid, "show-center-notify", CEFINT(1), CEFSTR("Antivar!"));
-    return 1;
-}
-CMD:ungiveantivar(playerid, params[])
-{
-	if(PI[playerid][pRang] < 9) return SCM(playerid, COLOR_GREY, !"Данная команда Вам недоступна");
-	if(sscanf(params,"u",params[0])) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /ungiveantivar [ID игрока]");
-	if(!IsPlayerConnected(params[0]))return  SCM(playerid, COLOR_GREY, !"Игрок не в сети");
-	if(!IsPlayerLogged{params[0]}) return SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
-	if(PI[params[0]][pMember] == 0) return SCM(playerid, COLOR_GREY,"Данный игрок не состоит в Вашей организации");
-	if(PI[playerid][pMember] != PI[params[0]][pMember]) return SCM(playerid, COLOR_GREY, !"Данный игрок не состоит в Вашей организации");
-	if(PI[params[0]][pLeader] != 0) return SCM(playerid, COLOR_GREY, !"Нельзя применить к лидеру");
-    PI[params[0]][pAntiCLMenu] = 0;
-	SCMf(params[0], COLOR_TOMATO, "%s снял вам запрет на учатсие в захвате территории",PI[playerid][pName]);
-	SCMf(playerid, COLOR_LIGHTYELLOW, "Вы Cняли  запрет на учатсие в захвате территории игроку %s",getName(params[0]));
-	cef_emit_event(playerid, "show-center-notify", CEFINT(1), CEFSTR("Antivar Снят!"));
-    return 1;
-}
 public void:OnPlayerKeyDown(player, key) 
 {
 	if(PI[player][pTester] == 1) 
@@ -26678,11 +25792,23 @@ public OnPlayerCommandReceived(playerid, cmd[], params[], flags)
 }
 public OnPlayerPickUpPickup(playerid, pickupid)
 {
-	//if(GetPVarInt(playerid, "PickUPKD") < gettime())  return 1;
+	if(GetPVarInt(playerid, "PickUPKD") > gettime())  return 1;
 
     mineOnPlayerPickUpDynamicPickup(playerid, pickupid);
 
-	//SetPVarInt(playerid,"PickUPKD",gettime() + 6);
+	if(pickupid == PointCapture)
+    {
+        new NoOnline = 0;
+        if(PI[playerid][pCaptureManager] == 1 || NoOnline == 1)
+        {
+            ShowPlayerDialog(playerid, 4901, DIALOG_STYLE_MSGBOX, "{ee3366}Стрела", "\
+            {FFFFFF}Вы действительно хотите участвовать в битве за территорию?\n\n\
+            {FFFF99}Вы будете исключены из списка участников,\n\
+            если покините зону стрелы, пробудете в AFK\n\
+            более 5 минут или выйдите из игры", !"Вступить", !"Отмена");
+        }
+    }
+	SetPVarInt(playerid,"PickUPKD",gettime() + 7);
     return 1;
 }
 stock SetDefaultSkin(org, id)
@@ -26794,7 +25920,7 @@ callback: SavePlayerData(playerid)
 			ammo3=%d, ammo4=%d, ammo5=%d, ammo6=%d, ammo7=%d, ammo8=%d, ammo9=%d, ammo10=%d, ammo11=%d, ammo12=%d, demorgan=%d,\
 			demorgan_time=%d, twarn=%d, healthchest=%d, HEALPACKSKLAD=%d, Сanister=%d, mask=%d, fixnabor=%d,\
 			ProgressAmmo=%d, ProgressMetall=%d, PromoCodeUse=%d, ProgressDrugs=%d, ProgressCarGrabber=%d,\
-			AntiCLMenu=%d, ProgressSellGun=%d, ProgressCapture=%d WHERE id=%d",
+			CaptureManager=%d, ProgressSellGun=%d, ProgressCapture=%d WHERE id=%d",
 			PI[playerid][pAdminEvents],
 			PI[playerid][pAdminReports],
 			PI[playerid][pSkin],
@@ -26906,7 +26032,7 @@ callback: SavePlayerData(playerid)
 			PI[playerid][pPromoCodeUse],
 			PI[playerid][pProgressDrugs],
 			PI[playerid][pProgressCarGrabber], 
-			PI[playerid][pAntiCLMenu], 
+			PI[playerid][pCaptureManager], 
 			PI[playerid][pProgressSellGun], 
 			PI[playerid][pProgressCapture], 
 			PI[playerid][data_ID]
@@ -26989,3 +26115,37 @@ stock Freeze(playerid)
 	return SetTimerEx("unFreeze", 3500,0, "%d", playerid);
 }
 callback: unFreeze(playerid) TogglePlayerControllable(playerid, 1);
+stock ShowTargetMenu(playerid)
+{
+	targplayer[playerid] = GetPlayerTargetPlayer(playerid);
+	return ShowPlayerDialog(playerid, 3298, DIALOG_STYLE_LIST, "{ee3366}Взаимодействие с игроком", "\
+	1. Пожать руку\n\
+	2. Передать аптечку\n\
+	3. Показать паспорт\n\
+	4. Показать лицензии\n\
+	5. Показать мед. карту\n\
+	6. Показать навыки владения оружием\n\
+	7. Передать маску", "Далее", "Закрыть");
+}
+stock ShowLMenu_OPG(playerid) 
+{
+	new dialog[712];
+	format(dialog,sizeof(dialog),
+    "{e6e69c}1. Управление группами\n\
+	{e6e69c}2. Список всех участников организации\n\
+	{e6e69c}3. Чёрный список\n\
+	{e6e69c}4. Автопарк организации\n\
+	{3CB371}5. Принять в организацию\n\
+	{3CB371}6. Уволить из организации\n\
+	{3CB371}7. Уволить из огранизации оффлайн\n\
+	{3CB371}8. Выдать выговор\n\
+	{3CB371}9. Выдать выговор оффлайн\n\
+	{3CB371}10. Снять выговор\n\
+	{3CB371}11. Снять выговор оффлайн\n\
+	{3CB371}12. Изменить внешность\n\
+	{3CB371}13. Изменить группу\n\
+	{3CB371}14. Назначить смотрящего за стрелой\n\
+	{3CB371}15. Снять смотрящего за стрелой\n\
+	{6dbdd8}16. Расформировать организацию");
+	return ShowPlayerDialog(playerid, 7501, DIALOG_STYLE_LIST, "{ee3366}Меню лидера", dialog, "Выбрать", "Отмена");
+}

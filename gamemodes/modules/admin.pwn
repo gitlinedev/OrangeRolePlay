@@ -231,7 +231,7 @@ cmd:slap(playerid, params[])
 {
 	new id;
 	if(sscanf(params,"ud",id,params[1])) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /slap [ID игрока] [высота]");
-	if(params[1] < 1 || params[1] > 30) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /slap [ID игрока] [высота]");
+	//if(params[1] < 1 || params[1] > 30) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /slap [ID игрока] [высота]");
 	if(!IsPlayerConnected(id))return  SCM(playerid, COLOR_GREY, !"Игрок не в сети");
 	if(!IsPlayerLogged{id}) return SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
 	new Float:X,Float:Y,Float:Z;
@@ -433,7 +433,7 @@ CMD:auninvite(playerid, params[])
 	PI[params[0]][pProgressCarGrabber] = 0;
 	PI[params[0]][pProgressSellGun] = 0;
 	PI[params[0]][pProgressCapture] = 0;
-    PI[params[0]][pAntiCLMenu] = 0;
+    PI[params[0]][pCaptureManager] = 0;
 	PI[params[0]][pRankUPTime] = 0;
 
 	SetPlayerSkinAC(params[0], PI[params[0]][pSkin]);
@@ -514,7 +514,7 @@ stock admins_OnDialogResponse(playerid, dialogid, response, listitem)
                     case 15: SetPlayerPos(playerid, 1880.3647,1180.8679,38.8619+2);
 					case 16: SetPlayerPos(playerid, 2469.1038,-714.2072,24.5437+2);
 					case 17: SetPlayerPos(playerid, 1806.8326,2507.3311,21.5287+2);
-					case 18: SetPlayerPos(playerid, 1399.9020,-1249.6090,15.1950+2);
+					case 18: SetPlayerPos(playerid, 1517.7395,-1213.6506,15.0275+2);
                 }
 				SetPlayerVirtualWorld(playerid,0);
 				SetPlayerInterior(playerid,0);

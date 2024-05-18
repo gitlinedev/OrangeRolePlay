@@ -56,16 +56,11 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    if(!response) return ShowShopMenu(playerid);
 		    if(response)
 		    {
-				if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) 
-                {
-					BizInfo[b][bMoney] += PHONE;
-					BizInfo[b][bProduct] -= 1;
-				}
+				if(BizInfo[b][bProduct] <= 0  || BizInfo[b][bOwned] == 0) return SendClientMessage(playerid, COLOR_GREY, !"У бизнеса недостаточно продуктов");
+
 				if(GetPlayerMoneyID(playerid) < PHONE) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 				if(PI[playerid][data_PHONE] == 1) return SCM(playerid, COLOR_GREY, !"У Вас уже есть телефон");
 				GivePlayerMoneyLog(playerid, -PHONE);
-				BizInfo[b][bMoney] += PHONE;
-				BizInfo[b][bProduct] -= 1;
 
                 PI[playerid][data_PHONE] = 1;
 
@@ -81,14 +76,12 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    if(!response) return ShowShopMenu(playerid);
 		    if(response)
 		    {
+                if(BizInfo[b][bProduct] <= 0  || BizInfo[b][bOwned] == 0) return SendClientMessage(playerid, COLOR_GREY, !"У бизнеса недостаточно продуктов");
+
 				if(strlen(inputtext) == 0) return ShowPlayerDialog(playerid, 6990, DIALOG_STYLE_INPUT, "{ee3366}Покупка номера телефона", "{FFFFFF}Введите желаем {3366cc}6-значный{FFFFFF} номер телефона\nНовая SIM-карта заменит текущую (при eё наличии).\n{696969}Отменить это действие будет невозможно", "Купить", "Назад");
 				if(strlen(inputtext) < 6 || strlen(inputtext) > 6) return SCM(playerid, COLOR_GREY, !"Длина номера 6 символа"), ShowPlayerDialog(playerid, 6990, DIALOG_STYLE_INPUT, "{ee3366}Покупка номера телефона", "Введите желаем {3366cc}6-значный{FFFFFF} номер телефона\nНовая SIM-карта заменит текущую (при eё наличии).\n{696969}Отменить это действие будет невозможно", "Купить", "Назад");
-	            if(PI[playerid][data_PHONE] == 0) return SCM(playerid, COLOR_GREY, !"Сначала купите телефон");
-                if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) 
-                {
-					BizInfo[b][bMoney] += PHONE;
-					BizInfo[b][bProduct] -= 1;
-				}
+
+                if(PI[playerid][data_PHONE] == 0) return SCM(playerid, COLOR_GREY, !"Сначала купите телефон");
 				if(GetPlayerMoneyID(playerid) < PHONE) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 				SetPVarInt(playerid, "simcard", strval(inputtext));
 
@@ -163,6 +156,7 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    if(!response) return 1;
 			if(response) 
 			{
+                if(BizInfo[b][bProduct] <= 0  || BizInfo[b][bOwned] == 0) return SendClientMessage(playerid, COLOR_GREY, !"У бизнеса недостаточно продуктов");
 			    switch(listitem) 
 				{
 			        case 0: 
@@ -177,15 +171,8 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                     }
 			        case 2: 
                     {
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) 
-                        {
-							BizInfo[b][bMoney] += FLOWERS;
-							BizInfo[b][bProduct] -= 1;
-						}
 						if(GetPlayerMoneyID(playerid) < FLOWERS) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-						GivePlayerMoneyLog(playerid,-FLOWERS);
-						BizInfo[b][bMoney] += FLOWERS;
-						BizInfo[b][bProduct] -= 1;
+						GivePlayerMoneyLog(playerid, -FLOWERS);
 						GiveWeapon(playerid, 14, 1);
 					    UpdateBusinessData(b);
 						new cef[10]; f(cef, 10, "-%dР", FLOWERS);
@@ -196,15 +183,8 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					case 3:
 					{
 					    if(PI[playerid][pHealPack] == 3) return SCM(playerid, COLOR_GREY, !"Вы можете купить не более 3х аптечек");
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) 
-                        {
-							BizInfo[b][bMoney] += HEALPACK;
-							BizInfo[b][bProduct] -= 1;
-						}
 						if(GetPlayerMoneyID(playerid) < HEALPACK) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 						GivePlayerMoneyLog(playerid,-HEALPACK);
-						BizInfo[b][bMoney] += HEALPACK;
-						BizInfo[b][bProduct] -= 1;
 						PI[playerid][pHealPack]++;
 						UpdatePlayerDataInt(playerid, "healthchest", PI[playerid][pHealPack],10245);
 					    UpdateBusinessData(b);
@@ -216,15 +196,8 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 					case 4:
 					{
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1)
-                        {
-							BizInfo[b][bMoney] += PHOTO;
-							BizInfo[b][bProduct] -= 1;
-						}
 						if(GetPlayerMoneyID(playerid) < PHOTO) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 						GivePlayerMoneyLog(playerid,-PHOTO);
-						BizInfo[b][bMoney] += PHOTO;
-						BizInfo[b][bProduct] -= 1;
 						GiveWeapon(playerid, 43, 20);
 					    UpdateBusinessData(b);
                         new cef[10]; f(cef, 10, "-%dР", PHOTO);
@@ -234,15 +207,8 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 					case 5:
 					{
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) 
-                        {
-							BizInfo[b][bMoney] += BALLON;
-							BizInfo[b][bProduct] -= 1;
-						}
 						if(GetPlayerMoneyID(playerid) < BALLON) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 						GivePlayerMoneyLog(playerid,-BALLON);
-						BizInfo[b][bMoney] += BALLON;
-						BizInfo[b][bProduct] -= 1;
 						GiveWeapon(playerid, 41, 1000);
 					    UpdateBusinessData(b);
                         new cef[10]; f(cef, 10, "-%dР", BALLON);
@@ -253,11 +219,6 @@ stock shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					case 6:
 					{
 					    if(PI[playerid][data_MASK] >= 1) return SCM(playerid, COLOR_GREY, !"Вы не можете преобрести более 1-й маски");
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1)
-						{
-							BizInfo[b][bMoney] += MASK;
-							BizInfo[b][bProduct] -= 1;
-						}
 						if(GetPlayerMoneyID(playerid) < MASK) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 						GivePlayerMoneyLog(playerid,-MASK);
 						PI[playerid][data_MASK]++;
@@ -309,9 +270,9 @@ callback: CheckSimCard(playerid)
 	else
 	{
 		new b = GetPVarInt(playerid,"business");
+        if(BizInfo[b][bProduct] <= 0  || BizInfo[b][bOwned] == 0) return SendClientMessage(playerid, COLOR_GREY, !"У бизнеса недостаточно продуктов");
+        
 		GivePlayerMoneyLog(playerid,-SIM_CARD);
-		BizInfo[b][bMoney] += SIM_CARD;
-		BizInfo[b][bProduct] -= 1;
 		PI[playerid][data_NUMBER] = GetPVarInt(playerid,"simcard");
 		UpdatePlayerDataInt(playerid, "number", PI[playerid][data_NUMBER], 28023);
 		cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка сим-карты"), CEFSTR("fb4949"), CEFSTR("-300P"));
