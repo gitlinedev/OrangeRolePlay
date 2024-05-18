@@ -153,6 +153,8 @@ stock CheckRequest(playerid)
 		new value_1 = PI[from_player][pRequestValue];
 		new value_2 = PI[from_player][pRequestValueTwo];
 
+		new clear = 0;
+
 		if(ProxDetectorS(10.0, playerid, from_player)) 
 		{
 			if(type == 1)
@@ -166,6 +168,7 @@ stock CheckRequest(playerid)
 					}
 					else 
 					{
+						clear = 1;
 						return ShowPlayerDialogf(playerid, 9221, DIALOG_STYLE_MSGBOX, !"{ee3366}Подтверждение", !"Купить", !"Закрыть",\
 								"{FFFFFF}Вы уверены что хотите купить траснсопрт: {3366cc}'%s'{FFFFFF}, за {3366cc}%d руб\n {FFFF99}(включая налог на премиум транспорт: %d руб)",
 								VehicleNames[CarInfo[PI[from_player][pLoadVehicleID]][cModel]-400], value_1+value_2, value_2);
@@ -180,6 +183,7 @@ stock CheckRequest(playerid)
 					}
 					else 
 					{
+						clear = 1;
 						return ShowPlayerDialogf(playerid, 9221, DIALOG_STYLE_MSGBOX, !"{ee3366}Подтверждение", !"Купить", !"Закрыть",\
 							"{FFFFFF}Вы уверены что хотите купить траснсопрт: {3366cc}'%s'{FFFFFF}, за {3366cc}%d руб", 
 							VehicleNames[CarInfo[PI[from_player][pLoadVehicleID]][cModel]-400], value_1);
@@ -356,6 +360,7 @@ stock CheckRequest(playerid)
 				if(PI[playerid][data_VIP] == 0) SetPlayerHealthAC(playerid, 100);
 				else SetPlayerHealthAC(playerid, 176);
 			}
+			if(clear == 0) ClearProposition(from_player);
 		}
 		else SCM(playerid, COLOR_LIGHTGREY, !"Данный игрок слишком далеко от Вас");
 	}

@@ -891,7 +891,7 @@ new NPC_ALL[30],
 	VhodUchastokMVD1,
 	MVD_givegun_pickup,
 	Pravo_givegun_pickup,
-	vhe_magaz,
+	ArmyShop,
 	vch_givegun_pickup,
 	palata_vhod,
 	palata_vihod,
@@ -1362,7 +1362,6 @@ enum
 	dialog_avtobusjob,
 	dialog_GIVEGUNMVD,
 	dialog_GIVEGUNPRAVO,
-	dialog_Buymagazvh,
 	dialog_Avtougon,
 	dialog_DRUGBUY,
 	dialog_CARDBUY,
@@ -1414,6 +1413,7 @@ static PedFeMale[6] = {10,12,13,31,38,39};
 #include "modules/admin.pwn"
 #include "modules/mine.pwn"
 #include "modules/cef.pwn"
+#include "modules/capture.pwn"
 //=========================================================================================//
 forward Float:GetDistanceBetweenPlayers(p1,p2);
 public Float:GetDistanceBetweenPlayers(p1,p2) 
@@ -2108,8 +2108,16 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 		SetVehicleParamsEx(carid,false,lights_text,alarm,doors_text,bonnet,boot,objective);
 		CarInfo[carid][cEngineStatus] = 0;
 		cef_emit_event(playerid, "update-speed-icon", CEFINT(1), CEFINT(0));
-		hp = (hp-350)/10;
+
+		const Float:min_hp = 350.0;
+		const Float:max_hp = 750.0;
+
+		if (hp < min_hp) hp = 0.0;
+		else if (hp > max_hp) hp = 100.0;
+		else hp = ((hp - min_hp) / (max_hp - min_hp)) * 100.0;
+
 		cef_emit_event(playerid, "update-speed-text", CEFINT(1), CEFINT(floatround(hp, floatround_round)));
+
 		new Float:x, Float:y, Float:z;
 		GetPlayerPos(playerid, x, y, z);
 		switch(random(2)) 
@@ -2245,7 +2253,6 @@ public OnGameModeInit()
 	//остальное
 	#include <Mapping/derevya>
     #include <Mapping/MAP>
-    #include <Mapping/kaptterra>
 
 	//NEW MAPPING
 	#include <Mapping/vch> // база вч лытка
@@ -2335,12 +2342,18 @@ public OnPlayerRequestClass(playerid, classid)
 }
 callback: SpeedUpdate(playerid) 
 {
-	new carid = GetPlayerVehicleID(playerid), Float:hp;
+    new carid = GetPlayerVehicleID(playerid), Float:hp;
+    const Float:min_hp = 350.0;
+    const Float:max_hp = 750.0;
 
-	cef_emit_event(playerid, "update-speed-text", CEFINT(2), CEFINT(CarInfo[carid][cFuel]));
+    cef_emit_event(playerid, "update-speed-text", CEFINT(2), CEFINT(CarInfo[carid][cFuel]));
     GetVehicleHealth(carid, hp);
-	hp = (hp-350)/10;
-	cef_emit_event(playerid, "update-speed-text", CEFINT(1), CEFINT(floatround(hp, floatround_round)));
+
+    if (hp < min_hp) hp = 0.0;
+	else if (hp > max_hp) hp = 100.0;
+	else hp = ((hp - min_hp) / (max_hp - min_hp)) * 100.0;
+    
+    cef_emit_event(playerid, "update-speed-text", CEFINT(1), CEFINT(floatround(hp, floatround_round)));
 
 	if(CarInfo[carid][cEngineStatus] == 0) cef_emit_event(playerid, "update-speed-icon", CEFINT(1), CEFINT(0));
 	else cef_emit_event(playerid, "update-speed-icon", CEFINT(1), CEFINT(1));
@@ -2501,7 +2514,9 @@ public OnPlayerDisconnect(playerid, reason)
     KillTimer(PI[playerid][data_PLAYER_TIMER_ID]);
 	KillTimer(PI[playerid][LoadCefInformation]);
 	
+	SavePlayerData(playerid);
 	UpdatePlayerDataInt(playerid, "Online", 0, 18220);
+
 	if(console_Debbug == 1) printf("Игрок - %s покинул игру! [REASON: %s] [pAdmin %d, pID %d]", PI[playerid][pName],szDisconnectReason[reason], PI[playerid][pAdmin], PI[playerid][data_ID]);
 	return 1;
 }
@@ -3886,10 +3901,10 @@ public OnPlayerPickUpDynamicPickup(playerid, pickupid)
 		if(PI[playerid][pMember] != 1) return SCM(playerid, COLOR_GREY, "У Вас нет доступа к этому складу");
 		ShowPlayerDialog(playerid, dialog_GIVEGUNPRAVO, DIALOG_STYLE_LIST, "{ee3366}Получение оружия", "1. Desert Eagle\n2. Тайзер\n3. AKС-74У", "Получить", "Отмена");
 	}
-	if(pickupid == vhe_magaz) 
+	if(pickupid == ArmyShop) 
 	{
-		if(PI[playerid][pMember] != 2) return SCM(playerid, COLOR_GREY, "У Вас нет доступа к этому складу");
-		ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
+		if(PI[playerid][pMember] != 2) return SCM(playerid, COLOR_GREY, !"У Вас нет доступа к армейскому магазину");
+		ShowArmyShop(playerid);
 	}
 	if(pickupid == MVDGarageVhod) {
 	    if(PI[playerid][pMember] != 3) return SCM(playerid, COLOR_GREY, !"Вы не являетесь сотрудником Полиции");
@@ -4850,7 +4865,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	qeust_OnDialogResponse(playerid, dialogid, response, listitem);
 	business_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 	bl_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-	shop_OnDialogResponse(playerid, dialogid, response, listitem);
+	shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 
 	switch(dialogid) 
 	{
@@ -7106,43 +7121,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
    			    }
    			}
 		}
-		case dialog_Buymagazvh: {
-		    new b = GetPVarInt(playerid,"business");
-		    if(!response) return 1;
-		    if(response) {
-		        switch(listitem) {
-		            case 0:
-					{
-					    new cena = 200;
-					    if(PI[playerid][pHealPack] == 3) return SCM(playerid, COLOR_GREY,"Вы можете купить не более 3х аптечек"); ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
-						if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY,"У Вас недостаточно денег на руках"); ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
-						GivePlayerMoneyLog(playerid,-cena);
-						BizInfo[b][bMoney] += cena;
-						BizInfo[b][bProduct] -= 1;
-						PI[playerid][pHealPack]++;
-						UpdatePlayerDataInt(playerid, "healthchest", PI[playerid][pHealPack],10245);
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка мед. аптечки (/healme)"), CEFSTR("fb4949"), CEFSTR("-250P"));
-						new str_1[155];
-						format(str_1,sizeof(str_1),"Вы купили мед. аптечку{fe9a7e} (%d из 3){00aa33} за {fe9a7e}200 рублей", PI[playerid][pHealPack]);
-						SCM(playerid, COLOR_GREENNEW, str_1);
-						SCM(playerid, COLOR_GREENNEW, "Чтобы подлечиться используйте {fe9a7e}/healme{00aa33}, передать другому игроку {fe9a7e}/givechest");
-						ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
-					}
-					case 1:
-					{
-					    new cena = 150;
-					    if(PI[playerid][data_MASK] >= 1) return SCM(playerid, COLOR_GREY,"Вы не можете преобрести более 1-й маски"); ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1)
-						if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY,"У Вас недостаточно денег на руках"); ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
-						GivePlayerMoneyLog(playerid,-cena);
-						PI[playerid][data_MASK]++;
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка маски"), CEFSTR("fb4949"), CEFSTR("-150P"));
-						SCM(playerid, COLOR_GREENNEW, "Вы купили маску за {ff9977}150 руб{00aa33}. Чтобы надеть её используйте /mask");
-						ShowPlayerDialog(playerid, dialog_Buymagazvh, DIALOG_STYLE_LIST, "{ee3366}Войсковой Магазин", "1. Маска(150р)\n2. Аптечка(200р)", "Получить", "Отмена");
-					}
-			    }
-			}
-		}
 		case dialog_schoolinfo: {
 		    if(!response) return 1;
 			if(response) return 1;
@@ -8311,49 +8289,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			        }
 				}
 				cef_emit_event(playerid, "show-notify", CEFINT(17), CEFSTR("Пункт назначения отмечен у Вас на мини-карте"), CEFSTR("4ea650"));
-			}
-		}
-		case 6990:
-		{
-			new b = GetPVarInt(playerid,"business");
-		    if(!response) return ShowShopMenu(playerid);
-		    if(response)
-		    {
-				if(strlen(inputtextsave) == 0) return ShowPlayerDialog(playerid, 6990, DIALOG_STYLE_INPUT, "{ee3366}Покупка номера телефона", "{FFFFFF}Введите желаем {3366cc}6-значный{FFFFFF} номер телефона\nНовая SIM-карта заменит текущую (при eё наличии).\n{696969}Отменить это действие будет невозможно", "Купить", "Назад");
-				if(strlen(inputtextsave) < 6 || strlen(inputtextsave) > 6) return SCM(playerid, COLOR_GREY, !"Длина номера 6 символа"), ShowPlayerDialog(playerid, 6990, DIALOG_STYLE_INPUT, "{ee3366}Покупка номера телефона", "Введите желаем {3366cc}6-значный{FFFFFF} номер телефона\nНовая SIM-карта заменит текущую (при eё наличии).\n{696969}Отменить это действие будет невозможно", "Купить", "Назад");
-			    new cena = 300;
-	            if(PI[playerid][data_PHONE] == 0) return SCM(playerid, COLOR_GREY, !"Сначала купите телефон");
-                if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) {
-					BizInfo[b][bMoney] += cena;
-					BizInfo[b][bProduct] -= 1;
-				}
-				if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-				SetPVarInt(playerid, "simcard", strval(inputtextsave));
-				new str_q[70];
-				mysql_format(mysql,str_q, sizeof(str_q), "SELECT * FROM `accounts` WHERE `number` = '%d'", inputtextsave);
-				mysql_function_query(mysql, str_q, true, "CheckSimCard", "i", playerid);
-			}
-		}
-		case 6989:
-		{
-		    new b = GetPVarInt(playerid,"business");
-		    if(!response) return ShowShopMenu(playerid);
-		    if(response)
-		    {
-				if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) {
-					BizInfo[b][bMoney] += 5500 ;
-					BizInfo[b][bProduct] -= 1;
-				}
-				if(GetPlayerMoneyID(playerid) < 5500) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-				if(PI[playerid][data_PHONE] == 1) return SCM(playerid, COLOR_GREY, !"У Вас уже есть телефон");
-				GivePlayerMoneyLog(playerid, -5500);
-				BizInfo[b][bMoney] += 5500;
-				BizInfo[b][bProduct] -= 1;
-				PI[playerid][data_PHONE] = 1;
-				UpdateBusinessData(b);
-				cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка мобильного телефона"), CEFSTR("fb4949"), CEFSTR("-5500P"));
-				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_MSGBOX, !"{ee3366}Покупка мобильного телефона", "Поздравляем!\nВы купили телефон {3366cc}bPhone XX{FFFFFF}\nНе забудьте приобрести SIM-карту", "Закрыть", "Назад");
-				SCM(playerid, COLOR_GREEN, !"[Покупка]: {FFFFFF}Чтобы открыть меню телефона используйте {42B02C}клавишу P");
 			}
 		}
 		case dialog_EAT_MENU: 
@@ -17874,14 +17809,6 @@ callback: CheckCarHealth()
 		}
 	}
 }
-stock Freeze(playerid) {
-	TogglePlayerControllable(playerid, 0);
-	cef_emit_event(playerid, "show-center-notify", CEFINT(4), CEFSTR("Пожалуйста, подождите..."));
-	return SetTimerEx("unFreeze",5000,0,"%d",playerid);
-}
-callback: unFreeze(playerid) {
-	TogglePlayerControllable(playerid, 1);
-}
 stock GetGZFrac(gznum){
 	new cvet;
 	switch(gz_info[gznum][gzopg]) {
@@ -20736,26 +20663,6 @@ stock NameJob(id) {
 	}
     return name;
 }
-callback: CheckSimCard(playerid) 
-{
-	new rows, fields;
-    cache_get_data(rows, fields);
-    if(rows) return ShowPlayerDialog(playerid, 6990, DIALOG_STYLE_INPUT, "{ee3366}Покупка номера телефона", "{FFFFFF}Введите желаем {3377cc}6-значный{FFFFFF} номер телефона\nНовая SIM-карта заменит текущую (при eё наличии).\n{696969}Отменить это действие будет невозможно", "Купить", "Назад");
-	if(!rows) 
-	{
-		new b = GetPVarInt(playerid,"business"),cena = 300;
-		new sim = GetPVarInt(playerid,"simcard");
-		GivePlayerMoneyLog(playerid,-cena);
-		BizInfo[b][bMoney] += cena;
-		BizInfo[b][bProduct] -= 1;
-		PI[playerid][data_NUMBER] = sim;
-		UpdatePlayerDataInt(playerid, "number", PI[playerid][data_NUMBER], 28023);
-		cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка сим-карты"), CEFSTR("fb4949"), CEFSTR("-300P"));
-		ShowPlayerDialogf(playerid, 0, DIALOG_STYLE_MSGBOX, !"{ee3366}Покупка SIM-карты", "Закрыть", "Назад", "{FFFFFF}Поздравляем!\nВы купили SIM-карту c номером {3377cc}%d",sim);
-		UpdateBusinessData(b);
-	}
-	return 1;
-}
 stock SetAccessory(playerid) 
 {
 	if(PI[playerid][pUseAccessory] == 1) { // Рога
@@ -20881,7 +20788,7 @@ CMD:bomb(playerid)
 	if(bombacitve == 1) return SCM(playerid, COLOR_BLACK,"Забор Войсковой части уже взорван");
 	if(bombplayer[playerid] == 1) return SCM(playerid, COLOR_BLACK,"У Вас уже есть бомба");
 	if(PI[playerid][data_MET] < 15) return SCM(playerid, COLOR_BLACK,"Для создания бомбы нужно 15 металла");
-	if(!PlayerToPoint(200.0, playerid, 1756.5381, 1731.6260, 15.3168)) return SCM(playerid, COLOR_BLACK,"Нужно находиться возле территории ВЧ!");
+	if(!PlayerToPoint(270.0, playerid, -2624.9246,398.4235,11.0944)) return SCM(playerid, COLOR_BLACK,"Нужно находиться возле территории ВЧ!");
 	new str1[144];
 	format(str1,sizeof(str1),"%s снял портфель со спины",getName(playerid));
 	ProxDetector(25.0, playerid, str1, 0xFF99CCFF, 0xFF99CCFF, 0xFF99CCFF, 0xFF99CCFF ,0xFF99CCFF);
@@ -24822,7 +24729,7 @@ CMD:vc(playerid, params[])
     if(sscanf(params, "s[86]", text)) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /vc [текст]");
 
 	new str_vip[144];
-	if(PI[playerid][pAdmin] < 1) format(str_vip, sizeof(str_vip), "{FFA500}[VIP (Игровой Мастер #%d)]{FFFFFF}: %s", PI[playerid][pAdminNumber], text);
+	if(PI[playerid][pAdmin] >= 1) format(str_vip, sizeof(str_vip), "{FFA500}[VIP (Игровой Мастер #%d)]{FFFFFF}: %s", PI[playerid][pAdminNumber], text);
 	else format(str_vip, sizeof(str_vip), "{FFA500}[VIP] {FFFFFF}%s[%i]: %s", PI[playerid][pName], playerid, text);
 
     SendVIPMessage(-1, str_vip);
@@ -25634,7 +25541,7 @@ stock OtherMapping()
 	VihodKaznaPickup = CreateDynamicPickup(1318, 23, -1362.6874,1240.6281,2102.4299, -1);
 	Kazna_GiveMoney = CreateDynamicPickup(19134, 23, -36.3876,1825.8743,-35.9791, -1);
     Pravo_givegun_pickup = CreateDynamicPickup(1239, 23, -35.1521,1819.1311,-35.9791, -1);
-    vhe_magaz = CreateDynamicPickup(1239, 23, -1411.6289,395.9333,419.1073, 0);
+    ArmyShop = CreateDynamicPickup(1239, 23, -1411.6289,395.9333,419.1073, 0);
     vch_givegun_pickup = CreateDynamicPickup(19134, 23, 743.2869,1525.6694,2002.1899, -1);
 	MVD_givegun_pickup = CreateDynamicPickup(19134, 23, 126.3125,1895.6376,-31.9697, -1);
 	Create3DTextLabel("{008000}/clear\nдля снятия розыска", -1, 1456.4865,1627.6499,697.1956, 5.0, 1);
@@ -26868,6 +26775,9 @@ callback: SavePlayerData(playerid)
 {
 	if(IsPlayerLogged{playerid} && IsPlayerConnected(playerid))
 	{
+		GetPlayerHealth(playerid, PI[playerid][pHealthPoints]);
+		GetPlayerArmour(playerid, PI[playerid][data_ARM]);
+
 		mysql_string[0] = EOS;
 
 		format(mysql_string, sizeof(mysql_string), "\
@@ -26900,7 +26810,6 @@ callback: SavePlayerData(playerid)
 			PI[playerid][data_TRANSFER_FRAC],
 			PI[playerid][pRang],
 			PI[playerid][pAdmin],
-
 			PI[playerid][pAdminStatus],
 			PI[playerid][data_CADMIN],
 			PI[playerid][pCaptureKills],
@@ -26908,7 +26817,6 @@ callback: SavePlayerData(playerid)
 			PI[playerid][pLoginIP],
 			PI[playerid][data_MUTE],
 			PI[playerid][data_MUTETIME],
-			
 			PI[playerid][data_VMUTE],
 			PI[playerid][data_VMUTETIME],
 			PI[playerid][data_WARN],
@@ -27004,6 +26912,8 @@ callback: SavePlayerData(playerid)
 			PI[playerid][data_ID]
 		);
 		mysql_pquery(mysql, mysql_string);
+
+		printf(mysql_string);
 	}
 	return 1;
 }
@@ -27021,7 +26931,7 @@ callback: ShowLeaders(playerid)
 	if(!rows) return ShowPlayerDialog(playerid, 0, DIALOG_STYLE_MSGBOX, !"{ee3366}Лидеры и заместители", !"{FFFFFF}В данный момент лидеров нет", !"Закрыть", !"");
 	else 
 	{
-		new temp[144], string[1048], NamePlayer[24], Name[30], Org[17], Rang[12], Status[25];
+		new temp[144], string[1048+256], NamePlayer[24], Name[30], Org[17], Rang[12], Status[25];
 		new getRang, getMember, Number, StatusOnline;
 
 		for(new i = 0; i < rows; i++) 
@@ -27067,8 +26977,15 @@ callback: ShowLeaders(playerid)
 			}
 			format(string,sizeof(string), "%s%s\t%s\t%s\t%d\t%s\n", string, Org, Rang, Name, Number, Status);
 		}
-		global_str[0] = EOS, format(global_str, 1048, "Организация\tДолжность\tИмя\tТелефон\tСостояние\n%s", string);
+		global_str[0] = EOS, format(global_str, 1324, "Организация\tДолжность\tИмя\tТелефон\tСостояние\n%s", string);
 		CEF__Dialog(playerid, 0, DIALOG_STYLE_TABLIST_HEADERS, "{ee3366}Лидеры и заместители", global_str, "Закрыть", "");
 	}
 	return 1;
 }
+stock Freeze(playerid) 
+{
+	TogglePlayerControllable(playerid, 0);
+	cef_emit_event(playerid, "show-center-notify", CEFINT(4), CEFSTR("Пожалуйста, подождите..."));
+	return SetTimerEx("unFreeze", 3500,0, "%d", playerid);
+}
+callback: unFreeze(playerid) TogglePlayerControllable(playerid, 1);
