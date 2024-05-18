@@ -1304,7 +1304,6 @@ enum
 	dialog_ENTER_HOUSE,
 	dialog_EXIT_HOUSE,
 	dialog_ASH_TEST,
-	dialog_24_MENU,
 	dialog_BUYGUN,
 	dialog_BUYGUN_1,
 	dialog_BUYPROD,
@@ -1410,6 +1409,7 @@ static PedFeMale[6] = {10,12,13,31,38,39};
 #include "modules/quest.pwn"
 #include "modules/blacklist.pwn"
 #include "modules/business.pwn"
+#include "modules/showmenu.pwn"
 #include "modules/army.pwn"
 #include "modules/admin.pwn"
 #include "modules/mine.pwn"
@@ -1677,9 +1677,11 @@ stock LoadOrgCars() {
 	army_car[6] = CreateVehicle(598, -128.5097,653.4676,-50.1706,181.3475, 1, 1, -1);
 	army_car[7] = CreateVehicle(598, -135.6245,653.2039,-50.1706,176.8134, 1, 1, -1);
 	army_car[8] = CreateVehicle(601, 1671.6355,1667.8109,15.6293,1.1148, 1, 1, -1);
-	VertletVh[1] = CreateVehicle(548, 1697.7932,1687.1624,17.0586,359.4680, 1, 1, -1);
-	VertletVh[2] = CreateVehicle(548, 1826.3486,1685.4786,17.0623,359.9975, 1, 1, -1);
-	VertletVh[3] = CreateVehicle(548, 1784.4617,1687.0995,17.1959,359.8670, 1, 1, -1);
+
+	VertletVh[1] = CreateVehicle(548, -2661.7263,435.8972,11.1828,359.9406, 1, 1, -1);
+	VertletVh[2] = CreateVehicle(548, -2698.5901,435.8012,11.2348,0.0000, 1, 1, -1);
+	VertletVh[3] = CreateVehicle(548, -2736.1858,435.5855,11.2284,0.0000, 1, 1, -1);
+
    	SetVehicleVirtualWorld(army_car[1], GARAGE_INT_VCH);
     LinkVehicleToInterior(army_car[1], 1);
    	SetVehicleVirtualWorld(army_car[2], GARAGE_INT_VCH);
@@ -4333,11 +4335,11 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 				carid == army_car[6] || carid == army_car[7]) 
 				{
 					new vehicle = GetPlayerVehicleID(playerid);
-	           		SetVehiclePos(vehicle, -164.6677,651.2881,-50.1762);
+	           		SetVehiclePos(vehicle, -164.6677,651.2881,-50.1762+2);
 		 	        SetVehicleVirtualWorld(vehicle, 4);
 		 	        LinkVehicleToInterior(vehicle, 1);
 		 	        SetVehicleZAngle(vehicle, 181.0058);
-	           		SetPlayerPosAC(playerid, -164.6677,651.2881,-50.1762);
+	           		SetPlayerPosAC(playerid, -164.6677,651.2881,-50.1762+2);
 	         		SetPlayerVirtualWorld(playerid, 4);
 		    		SetPlayerInterior(playerid, 1);
 		    		PutPlayerInVehicle(playerid, vehicle, 0);
@@ -4848,6 +4850,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	qeust_OnDialogResponse(playerid, dialogid, response, listitem);
 	business_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 	bl_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
+	shop_OnDialogResponse(playerid, dialogid, response, listitem);
 
 	switch(dialogid) 
 	{
@@ -6571,9 +6574,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_MSGBOX, !"{ee3366}Операция завершена", str_3, "Закрыть", "");
 			}
         }
-        case 9001: {
+        case 9001: 
+		{
             if(!response) return 1;
-			if(response) {
+			if(response) 
+			{
 			    if(PI[playerid][data_PHONE] == 0) return SCM(playerid, COLOR_GREY, !"У вас нет телефона");
 			    if(strval(inputtext) <= 0) return SCM(playerid, COLOR_GREY, !"Недопустимое значение");
 			    if(strval(inputtext) > GetPlayerMoneyID(playerid)) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
@@ -8308,118 +8313,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 				cef_emit_event(playerid, "show-notify", CEFINT(17), CEFSTR("Пункт назначения отмечен у Вас на мини-карте"), CEFSTR("4ea650"));
 			}
 		}
-		case dialog_24_MENU: 
-		{
-		    new b = GetPVarInt(playerid,"business");
-		    if(!response) return 1;
-			if(response) 
-			{
-			    switch(listitem) 
-				{
-			        case 0: SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Вы купили пачку чипсов (всего: {42B02C}1 шт{FFFFFF}). Чтобы покушать используйте {42B02C}/eat");
-			        case 1: SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Вы купили упаковку пиццы (всего: {42B02C}1 шт{FFFFFF}). Чтобы покушать используйте {42B02C}/eat");
-			        case 2: {
-					    new cena = 500;
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) {
-							BizInfo[b][bMoney] += cena;
-							BizInfo[b][bProduct] -= 1;
-						}
-						if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-						GivePlayerMoneyLog(playerid,-cena);
-						BizInfo[b][bMoney] += cena;
-						BizInfo[b][bProduct] -= 1;
-						GiveWeapon(playerid, 14, 1);
-					    UpdateBusinessData(b);
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка цветов"), CEFSTR("fb4949"), CEFSTR("-500P"));
-						SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Вы купили букет цветов. Чтобы подарить используйте {42B02C}/flowers");
-						ShowShopMenu(playerid);
-					}
-					case 3:
-					{
-					    new cena = 200;
-					    if(PI[playerid][pHealPack] == 3) return SCM(playerid, COLOR_GREY, !"Вы можете купить не более 3х аптечек");
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) {
-							BizInfo[b][bMoney] += cena;
-							BizInfo[b][bProduct] -= 1;
-						}
-						if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-						GivePlayerMoneyLog(playerid,-cena);
-						BizInfo[b][bMoney] += cena;
-						BizInfo[b][bProduct] -= 1;
-						PI[playerid][pHealPack]++;
-						UpdatePlayerDataInt(playerid, "healthchest", PI[playerid][pHealPack],10245);
-					    UpdateBusinessData(b);
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка мед. аптечки (/healme)"), CEFSTR("fb4949"), CEFSTR("-300P"));
-						SCMf(playerid, COLOR_GREEN, "[Покупка] {FFFFFF}Вы купили мед. аптечку{42B02C} (%d из 3){FFFFFF} за {42B02C}300 рублей", PI[playerid][pHealPack]);
-						SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Чтобы подлечиться используйте {42B02C}/healme{FFFFFF}, передать другому игроку {42B02C}/givechest");
-						ShowShopMenu(playerid);
-					}
-					case 4:
-					{
-					    new cena = 500;
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) {
-							BizInfo[b][bMoney] += cena;
-							BizInfo[b][bProduct] -= 1;
-						}
-						if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-						GivePlayerMoneyLog(playerid,-cena);
-						BizInfo[b][bMoney] += cena;
-						BizInfo[b][bProduct] -= 1;
-						GiveWeapon(playerid, 43, 20);
-					    UpdateBusinessData(b);
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка фотоапарата"), CEFSTR("fb4949"), CEFSTR("-500P"));
-						SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Вы купили фотоапарат.");
-						ShowShopMenu(playerid);
-					}
-					case 5:
-					{
-					    new cena = 400;
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1) {
-							BizInfo[b][bMoney] += cena;
-							BizInfo[b][bProduct] -= 1;
-						}
-						if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-						GivePlayerMoneyLog(playerid,-cena);
-						BizInfo[b][bMoney] += cena;
-						BizInfo[b][bProduct] -= 1;
-						GiveWeapon(playerid, 41, 1000);
-					    UpdateBusinessData(b);
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка балончика с краской"), CEFSTR("fb4949"), CEFSTR("-400P"));
-						SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Вы купили балончик с краской.");
-						ShowShopMenu(playerid);
-					}
-					case 6:
-					{
-					    new cena = 300;
-					    if(PI[playerid][data_MASK] >= 1) return SCM(playerid, COLOR_GREY, !"Вы не можете преобрести более 1-й маски");
-					    if(BizInfo[b][bProduct] >= 0  && BizInfo[b][bOwned] == 1)
-						{
-							BizInfo[b][bMoney] += cena;
-							BizInfo[b][bProduct] -= 1;
-						}
-						if(GetPlayerMoneyID(playerid) < cena) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-						GivePlayerMoneyLog(playerid,-cena);
-						PI[playerid][data_MASK]++;
-					    UpdateBusinessData(b);
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка маски"), CEFSTR("fb4949"), CEFSTR("-300P"));
-						SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Вы купили маску за {42B02C}300 руб{FFFFFF}. Чтобы надеть её используйте /mask");
-						ShowShopMenu(playerid);
-					}
-					case 7: ShowPlayerDialog(playerid, 6989, DIALOG_STYLE_MSGBOX, !"{ee3366}Покупка телефона", "{FFFFFF}Вы действительно хотите купить {3366cc}bPhone XX{ffffff} за {3366cc}5500 руб{ffffff}?\nНовый телефон заменит текущий (при его наличии).\n{696969}Отменить это действие будет невозможно", "Купить", "Назад");
-					case 8: ShowPlayerDialog(playerid, 6990, DIALOG_STYLE_INPUT, "{ee3366}Покупка номера телефона", "{FFFFFF}Введите желаем {3366cc}6-значный{ffffff} номер телефона\nНовая SIM-карта заменит текущую (при eё наличии).\n{696969}Отменить это действие будет невозможно", "Купить", "Назад");
-					case 9:
-					{
-						if(PI[playerid][data_FIXCOMPL] >= 5) return SCM(playerid, COLOR_GREY, !"Вы не можете преобрести более 3 Рем.Комплектов.");
-						if(GetPlayerMoneyID(playerid) < 1500) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно для покупки!");
-						cef_emit_event(playerid, "show-notify-no-img", CEFSTR("Покупка Рем.Комплект"), CEFSTR("fb4949"), CEFSTR("-1500P"));
-						SCM(playerid, COLOR_GREEN, !"[Покупка] {FFFFFF}Вы купили Рем.Комплект {42B02C}1500р руб{FFFFFF}. Чтобы его использовать /fix");
-						GivePlayerMoneyLog(playerid, -1500);
-						PI[playerid][data_FIXCOMPL] += 1;
-						ShowShopMenu(playerid);
-					}
-			    }
-			}
-		}
 		case 6990:
 		{
 			new b = GetPVarInt(playerid,"business");
@@ -8452,7 +8345,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					BizInfo[b][bProduct] -= 1;
 				}
 				if(GetPlayerMoneyID(playerid) < 5500) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
-				GivePlayerMoneyLog(playerid,-5500);
+				if(PI[playerid][data_PHONE] == 1) return SCM(playerid, COLOR_GREY, !"У Вас уже есть телефон");
+				GivePlayerMoneyLog(playerid, -5500);
 				BizInfo[b][bMoney] += 5500;
 				BizInfo[b][bProduct] -= 1;
 				PI[playerid][data_PHONE] = 1;
@@ -14649,17 +14543,6 @@ IsPlayerToKvadrat(playerid,Float:min_x,Float:min_y,Float:max_x,Float:max_y)
 	if((x <= max_x && x >= min_x) && (y <= max_y && y >= min_y)) return 1;
 	return 0;
 }
-stock ShowShopMenu(playerid) return ShowPlayerDialog(playerid, dialog_24_MENU, DIALOG_STYLE_LIST, "{ee3366}Магазин 24/7", "\
-	1. Чипсы (с собой)\t\t\t{ebeb8e}150 руб.\n\
-	{ffffff}2. Пицца (с собой)\t\t\t{ebeb8e}400 руб.\n\
-	{ffffff}3. Букет цветов 'Миллионы алых роз'\t{ebeb8e}500 руб.\n\
-	{ffffff}4. Медицинская аптечка\t\t{ebeb8e}200 руб.\n\
-	{ffffff}5. Фотоапарат\t\t\t\t{ebeb8e}500 руб.\n\
-	{ffffff}6. Балончик с краской\t\t\t{ebeb8e}400 руб.\n\
-	{ffffff}7. Маска\t\t\t\t{ebeb8e}300 руб.\n\
-	{ffffff}8. bPhoneXX\t\t\t\t{ebeb8e}5500 руб.\n\
-	{ffffff}9. SIM картка (6 цифр)\t\t\t{ebeb8e}300 руб.\n\
-	{ffffff}9. Ремонтный набор\t\t\t{ebeb8e}1500 руб.","Купить", "Закрыть");
 stock ShowCasinoGame(playerid)
 {
     for(new i = 0; i < 2; i++) TextDrawShowForPlayer(playerid, casino_fon[i]);
@@ -21046,8 +20929,6 @@ stock ShowApanel(playerid)
 }
 stock RemoveBuild(playerid) 
 {
-	//новый спавн
-	RemoveBuildingForPlayer(playerid, 4885, 1740.9000, 2522.9399, 17.0780, 0.25);
 	//123321_123321
 	RemoveBuildingForPlayer(playerid, 2009, 2567.8301, -2098.8000, 22.5000, 0.25);
 	RemoveBuildingForPlayer(playerid, 2010, 2567.8301, -2098.8000, 22.5000, 0.25);
@@ -27190,89 +27071,4 @@ callback: ShowLeaders(playerid)
 		CEF__Dialog(playerid, 0, DIALOG_STYLE_TABLIST_HEADERS, "{ee3366}Лидеры и заместители", global_str, "Закрыть", "");
 	}
 	return 1;
-}
-stock NewSpawn()
-{
-	CreateObject(1223, -9.33, -5.99, 6.36,   0.00, 0.00, 0.00);
-	CreateObject(1223, 1722.66, 2547.82, 14.65,   0.00, 0.00, 114.01);
-	CreateObject(1223, 1794.43, 2530.62, 14.66,   0.00, 0.00, 304.87);
-	CreateObject(1223, 1783.07, 2522.29, 14.66,   0.00, 0.00, 292.96);
-	CreateObject(1223, 1805.84, 2537.10, 14.75,   0.00, 0.00, 288.00);
-	CreateObject(970, 1808.71, 2538.01, 15.19,   0.06, 0.00, 24.49);
-	CreateObject(970, 1804.81, 2536.25, 15.20,   0.00, 0.00, 23.95);
-	CreateObject(970, 732.07, 11869.67, -4159.12,   0.00, 0.00, 0.00);
-	CreateObject(970, -1336.08, 8216.56, -7669.68,   0.00, 0.00, 0.00);
-	CreateObject(970, -69.97, 8680.15, -7694.01,   0.00, 0.00, 0.00);
-	CreateObject(970, 1800.85, 2534.49, 15.21,   0.36, 0.12, 23.75);
-	CreateObject(970, 985.41, 7830.02, -8573.92,   0.00, 0.00, 0.00);
-	CreateObject(970, 1797.16, 2532.35, 15.22,   0.00, 0.00, 38.27);
-	CreateObject(970, -2939.78, 5820.11, -8193.64,   0.00, 0.00, 0.00);
-	CreateObject(970, 1793.74, 2529.62, 15.23,   -2.54, 0.32, 38.76);
-	CreateObject(970, -1179.04, 12469.26, 1097.32,   0.00, 0.00, 0.00);
-	CreateObject(970, 1790.31, 2526.97, 15.25,   0.00, 0.00, 37.09);
-	CreateObject(970, 1772.23, 2515.73, 15.23,   0.00, 0.00, 27.19);
-	CreateObject(970, 1787.05, 2524.35, 15.22,   0.00, 0.00, 39.88);
-	CreateObject(970, 1783.61, 2522.00, 15.22,   0.00, 0.00, 29.09);
-	CreateObject(970, 1779.90, 2519.95, 15.22,   0.00, 0.00, 28.67);
-	CreateObject(970, 1776.04, 2517.81, 15.22,   0.00, 0.00, 29.32);
-	CreateObject(970, 1768.52, 2513.77, 15.26,   0.00, 0.00, 28.14);
-	CreateObject(970, 1756.49, 2312.73, 28.14,   0.00, 0.00, 0.00);
-	CreateObject(970, 7935.54, 1379.50, -8507.17,   0.00, 0.00, 0.00);
-	CreateObject(970, 1833.94, 2493.58, 15.21,   0.00, 0.00, 32.85);
-	CreateObject(970, 1816.52, 2541.63, 15.21,   0.00, 0.00, 24.98);
-	CreateObject(970, 1837.50, 2495.92, 15.19,   0.00, 0.00, 33.74);
-	CreateObject(970, 1812.66, 2539.83, 15.20,   0.00, 0.00, 25.07);
-	CreateObject(970, 1841.02, 2498.28, 15.18,   0.00, 0.00, 34.10);
-	CreateObject(970, 1844.58, 2500.62, 15.19,   0.00, 0.00, 32.47);
-	CreateObject(970, 1830.41, 2491.28, 15.20,   0.00, 0.00, 33.07);
-	CreateObject(970, 1823.23, 2486.74, 15.22,   0.00, 0.00, 32.66);
-	CreateObject(970, 1819.65, 2484.51, 15.23,   0.00, 0.00, 31.79);
-	CreateObject(970, 1816.09, 2482.26, 15.22,   0.00, 0.00, 32.94);
-	CreateObject(970, 1826.83, 2489.00, 15.21,   0.00, 0.00, 32.06);
-	CreateObject(970, 1798.35, 2470.79, 15.26,   0.00, 0.00, 32.40);
-	CreateObject(970, 1812.55, 2479.97, 15.22,   0.00, 0.00, 32.40);
-	CreateObject(970, 1809.01, 2477.68, 15.20,   0.00, 0.00, 33.22);
-	CreateObject(970, 1805.47, 2475.38, 15.20,   0.00, 0.00, 32.90);
-	CreateObject(970, 1801.94, 2473.09, 15.22,   0.00, 0.00, 32.87);
-	CreateObject(970, 1794.78, 2468.50, 15.26,   0.00, 0.00, 32.66);
-	CreateObject(970, 7914.37, -4035.28, -4852.32,   0.00, 0.00, 0.00);
-	CreateObject(970, 1846.81, 2503.78, 15.22,   0.00, 0.00, 76.97);
-	CreateObject(970, 1841.10, 2513.56, 15.26,   0.00, 0.00, 304.71);
-	CreateObject(970, 1846.15, 2506.87, 15.26,   0.00, 0.00, 308.58);
-	CreateObject(970, 1843.57, 2510.18, 15.26,   0.00, 0.00, 307.16);
-	CreateObject(970, 7265.15, 6509.61, -7391.57,   0.00, 0.00, 0.00);
-	CreateObject(970, -1702.65, 3750.48, -9910.49,   0.00, 0.00, 0.00);
-	CreateObject(970, 1837.66, 2521.87, 15.21,   0.00, 0.00, 36.73);
-	CreateObject(970, 1838.66, 2516.96, 15.25,   0.00, 0.00, 306.35);
-	CreateObject(970, 3469.00, 4452.51, -9740.69,   0.00, 0.00, 0.00);
-	CreateObject(1459, -2.30, -1.59, 1.57,   0.00, 0.00, 0.00);
-	CreateObject(1459, 1836.79, 2519.64, 14.66,   0.00, 0.00, 125.90);
-	CreateObject(970, 1823.77, 2545.88, 15.27,   0.00, 0.00, 34.09);
-	CreateObject(970, 1820.23, 2543.63, 15.21,   0.00, 0.00, 31.26);
-	CreateObject(970, 1525.31, 7411.03, -9217.01,   0.00, 0.00, 0.00);
-	CreateObject(970, 1827.24, 2548.26, 15.24,   0.00, 0.00, 34.45);
-	CreateObject(970, 1830.70, 2550.66, 15.22,   0.00, 0.00, 34.72);
-	CreateObject(970, 4337.75, 5904.71, -9256.18,   0.00, 0.00, 0.00);
-	CreateObject(970, 1844.24, 2544.89, 15.18,   0.00, 0.00, 310.17);
-	CreateObject(970, 1841.54, 2548.11, 15.18,   0.00, 0.00, 310.30);
-	CreateObject(970, 1838.16, 2550.16, 15.18,   0.00, 0.00, 346.99);
-	CreateObject(970, 1834.00, 2551.06, 15.22,   0.00, 0.00, 347.94);
-	CreateObject(970, 1846.81, 2541.57, 15.14,   0.00, 0.00, 305.01);
-	CreateObject(970, 9529.54, -2427.75, -4288.17,   0.00, 0.00, 0.00);
-	CreateObject(970, 1846.35, 2538.58, 15.19,   0.00, 0.00, 37.27);
-	CreateObject(970, 1842.98, 2536.08, 15.20,   0.00, 0.00, 35.77);
-	CreateObject(1223, 1818.27, 2542.76, 14.75,   0.00, 0.00, 295.42);
-	CreateObject(1223, 1832.05, 2551.81, 14.75,   0.00, 0.00, 274.29);
-	CreateObject(1223, 1839.98, 2539.40, 14.75,   0.00, 0.00, 34.18);
-	CreateObject(1223, 10255.11, 5992.69, -4542.14,   0.00, 0.00, 0.00);
-	CreateObject(1216, 1832.81, 2531.69, 15.42,   0.00, 0.00, 301.83);
-	CreateObject(970, 1764.72, 2511.71, 15.26,   0.00, 0.00, 28.50);
-	CreateObject(4879, -3641.56, -267.52, -7977.82,   0.00, 0.00, 0.00);
-	CreateObject(4879, -3641.56, -267.52, -7977.82,   0.00, 0.00, 0.00);
-	CreateObject(4879, 1775.19, 2384.85, 17.81,   0.00, 0.00, 124.49);
-	CreateObject(4886, 1759.49, 2509.92, 18.07,   0.00, 0.00, 120.94);
-	CreateObject(4886, 7566.57, 5359.35, -7593.35,   0.00, 0.00, 0.00);
-	CreateObject(4886, 1764.07, 2503.10, 18.07,   0.00, 0.00, 121.47);
-	CreateObject(714, 11721.59, 4148.63, -6718.85,   0.00, 0.00, 0.00);
-	CreateObject(714, 9659.19, 5862.27, -5521.75,   0.00, 0.00, 0.00);
 }
