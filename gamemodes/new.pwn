@@ -24023,8 +24023,8 @@ public void:OnPlayerKeyDown(player, key)
 					SetPVarInt(player, "business",b);
 				}
 			}
-			else if(carid == PI[player][pLoadVehicleID]) callcmd::key(player);
 		}
+		if(carid == PI[player][pLoadVehicleID]) callcmd::key(player);
 	}
 }
 public void:OnPlayerKeyUp(player, key) 

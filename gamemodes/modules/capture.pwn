@@ -39,6 +39,16 @@ static const stock Fraction_Name[MAX_FRACTIONS][32] = {
  	"Гопота",
  	"Кавказцы"
 };
+static const stock ColorTeam[MAX_FRACTIONS][7] = {
+	"FFFFFF",
+	"ffeb9c",
+ 	"009900",
+ 	"2222FF",
+ 	"ff99cc",
+ 	"663399",
+ 	"66CCFF",
+ 	"339933"
+};
 //============================== [ таймер - раунды ] ===================================//
 stock capture_SecondTimer()
 {
@@ -57,106 +67,74 @@ stock capture_SecondTimer()
 					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
 					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
 					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
+					cef_emit_event(i, "capture-text", CEFSTR("подготовка к битве"));
 				}
 			}
 		}
-		if(WarTimeSec == 0 && WarTimeMin == 0) 
-        {
-			new plus1 = 0,plus2 = 0;
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-            {
-				if(PI[i][pMember] == Command[0]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[0] == PI[i][pMember]) plus1 = 1;
-				if(PI[i][pMember] == Command[1]) if(IsPlayerToKvadrat(i, 1449.5,-1355, 1591.5, -1133)) if(Command[1] == PI[i][pMember]) plus2 = 1;
-			}
-			if(plus1 != 0) 
-            {
-				if(plus2 != 0) 
-                {
-					WarTimeMin = 1;
-					WarTimeSec = 59;
-					GangWarStatus = 2;
-				}
-			}
-			for(new i = 0; i < MAX_PLAYERS; i++) 
-            {
-				if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-                {
-					SCM(i, COLOR_TOMATO, !"На территории остались участники вражеской ОПГ, стрела продлена на 2 минуты");
-					new time[12];
-					if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
-					else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
-					cef_emit_event(i, "capture-time", CEFSTR(time));
-					cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-				}
-			}
-			if(GangWarStatus != 2) 
+		if(WarTimeMin == 0 && WarTimeSec == 0)
+		{
+			new count_1 = GetCountonGanwWar(Command[0]); // кто закаптил
+			new count_2 = GetCountonGanwWar(Command[1]); // кого закаптили
+
+			if(count_1 < 1)
 			{
-				if(CommandKill[0] > CommandKill[1]) 
+				for(new i = 0; i < MAX_PLAYERS; i++)
 				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
+					if(PI[i][pMember] == Command[0] || PI[i][pMember] == Command[1])
 					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
-						{
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							gz_info[WarZone][gzopg] = Command[0];
-							new col;
-							switch(Command[0]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							SaveGZ(Command[0], WarZone);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась успешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
+						GangZoneStopFlashForPlayer(i, WarZone);
+						new col;
+						switch(Command[1]) {
+							case 5: col = 0x663399BB;
+							case 6: col = 0x66CCFFBB;
+							case 7: col = 0x339933AA;
 						}
+						GangZoneHideForPlayer(i, WarZone);
+						GangZoneShowForPlayer(i, WarZone, col);
+						ClearKillFeed(i);
+						cef_emit_event(i, "hide-capture");
+						cef_emit_event(i, "clear-kill-list");
+
+						SendClientMessagef(i, COLOR_YELLOW, "Попыка {%s}ОПГ %s захватить территорию {%s}ОПГ %s завершилась неуспешно", ColorTeam[Command[0]], Fraction_Name[Command[0]], ColorTeam[Command[1]], Fraction_Name[Command[1]]);
 					}
-					GangWarStatus = 0;
 				}
-				else if(CommandKill[0] < CommandKill[1]) 
+			}
+			if(count_2 < 1)
+			{
+				for(new i = 0; i < MAX_PLAYERS; i++)
 				{
-					for(new i = 0; i < MAX_PLAYERS; i++) 
+					if(PI[i][pMember] == Command[0] || PI[i][pMember] == Command[1])
 					{
-						if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
+						GangZoneStopFlashForPlayer(i, WarZone);
+						gz_info[WarZone][gzopg] = Command[0];
+						new col;
+						switch(Command[0]) 
 						{
-							cef_emit_event(i, "capture-text", CEFSTR("продление 3"));
-							GangZoneHideForPlayer(i, CaptZone);
-							GangZoneStopFlashForPlayer(i, WarZone);
-							GangZoneHideForPlayer(i, WarZone);
-							new col;
-							switch(Command[1]) 
-							{
-								case 5: col = 0x663399BB;
-								case 6: col = 0x66CCFFBB;
-								case 7: col = 0x339933AA;
-							}
-							GangZoneHideForPlayer(i, WarZone);
-							GangZoneShowForPlayer(i, WarZone, col);
-							ClearKillFeed(i);
-							cef_emit_event(i, "hide-capture");
-							cef_emit_event(i, "clear-kill-list");
-							SCMf(i, COLOR_YELLOW, "Попытка ОПГ %s захватить территорию у ОПГ %s завершилась неуспешно", Fraction_Name[Command[0]], Fraction_Name[Command[1]]);
+							case 5: col = 0x663399BB;
+							case 6: col = 0x66CCFFBB;
+							case 7: col = 0x339933AA;
 						}
+						GangZoneHideForPlayer(i, WarZone);
+						GangZoneShowForPlayer(i, WarZone, col);
+						SaveGZ(Command[0], WarZone);
+						ClearKillFeed(i);
+						cef_emit_event(i, "hide-capture");
+						cef_emit_event(i, "clear-kill-list");
+
+						SendClientMessagef(i, COLOR_YELLOW, "Попыка {%s}ОПГ %s захватить территорию {%s}ОПГ %s завершилась успешно", ColorTeam[Command[0]], Fraction_Name[Command[0]], ColorTeam[Command[1]], Fraction_Name[Command[1]]);
 					}
-					GangWarStatus = 0;
 				}
 			}
 		}
 		for(new i = 0; i < MAX_PLAYERS; i++) 
 		{
-			if(5 <= PI[i][pMember] || PI[i][pMember] >= 7) 
+			if(PI[i][pMember] == Command[0] || PI[i][pMember] == Command[1])
 			{
 				new time[12];
 				if(WarTimeSec > 9) format(time, sizeof(time), "%d:%d", WarTimeMin, WarTimeSec);
 				else format(time, sizeof(time), "%d:0%d", WarTimeMin, WarTimeSec);
 				cef_emit_event(i, "capture-time", CEFSTR(time));
-				cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
+				cef_emit_event(i, "capture-text", CEFSTR("подготовка к битве"));
 			}
 		}
 	}
@@ -177,8 +155,10 @@ stock capture_OnDialogResponse(playerid, dialogid, response)
                     SetString(name, NameRang(playerid));
                     name = NameRang(playerid);
                     
+					new count = GetCountonGanwWar(PI[playerid][pMember]);
+
                     SendFractionMessagef(PI[playerid][pMember], 0x69b867FF, "[R] %s %s[%d] присоединился к участникам стрелы (%d/7)",\
-                        name, getName(playerid), playerid, );
+                        name, getName(playerid), playerid, count);
                 }
             }
         }
@@ -267,16 +247,17 @@ stock GetPlayerID(playerid)
     }
     return 0;
 }
-stock GetCountonGanwWar(playerid)
+stock GetCountonGanwWar(org)
 {
+	new count;
     for (new i = 0; i < sizeof(GangWarInfo); i++)
     {
-        if(GangWarInfo[i][gPlayerID] == playerid)
+        if(GangWarInfo[i][gMember] == org)
         {
-            return i;   
+            count++;
         }
     }
-    return 0;
+    return count;
 }
 cmd:test_playerid(playerid)
 {
@@ -331,8 +312,8 @@ cmd:capture(playerid)
 
 	GangWarStatus = 1;
 	//
-	WarTimeMin = 10;
-	WarTimeSec = 01;
+	WarTimeMin = 5;
+	WarTimeSec = 59;
 	WarZone = gz;
 	//
 	CommandKill[0]= 0;
@@ -369,32 +350,16 @@ cmd:capture(playerid)
 	{
 	    if(IsPlayerOPG(i)) 
 		{
-			if(PI[i][pMember] == Command[0]) 
-			{
-				SCM(i, COLOR_YELLOW, str);
-				SCM(i, COLOR_YELLOW,"Территория отмечена у Вас на мини-карте красным (мигающим) прямоугольником");
-				SCM(i, COLOR_YELLOW,"Место стрельбы отмечено у Вас на мини-карте красным (не мигающим!) прямоугольником в южной части карты");
-				SCM(i, COLOR_YELLOW,"Используйте команду {3377CC}/cteam{FFFF00}, чтобы посмотреть список участников своей ОПГ на территории стрелы");
-				cef_emit_event(i, "show-capture");
-				cef_emit_event(i, "capture-score", CEFINT(CommandKill[0]), CEFINT(CommandKill[1]));
-				cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
-				cef_emit_event(i, "capture-info-name", CEFSTR(name_org), CEFSTR(nameorg));
-				cef_emit_event(i, "show_kill_list");
-				GangZoneFlashForPlayer(i, gz, 0xFF000055);	
-			}
-			if(PI[i][pMember] == Command[1])
-			{
-				SCM(i, COLOR_YELLOW, str);
-				SCM(i, COLOR_YELLOW,"Территория отмечена у Вас на мини-карте красным (мигающим) прямоугольником");
-				SCM(i, COLOR_YELLOW,"Место стрельбы отмечено у Вас на мини-карте красным (не мигающим!) прямоугольником в южной части карты");
-				SCM(i, COLOR_YELLOW,"Используйте команду {3377CC}/cteam{FFFF00}, чтобы посмотреть список участников своей ОПГ на территории стрелы");
-				cef_emit_event(i, "show-capture");
-				cef_emit_event(i, "capture-score", CEFINT(CommandKill[0]), CEFINT(CommandKill[1]));
-				cef_emit_event(i, "capture-text", CEFSTR("подготовка"));
-				cef_emit_event(i, "capture-info-name", CEFSTR(name_org), CEFSTR(nameorg));
-				cef_emit_event(i, "show_kill_list");
-				GangZoneFlashForPlayer(i, gz, 0xFF000055);
-			}
+			SCM(i, COLOR_YELLOW, str);
+			SCM(i, COLOR_YELLOW, !"Территория отмечена у Вас на мини-карте красным (мигающим) прямоугольником");
+			SCM(i, COLOR_YELLOW, !"Место стрельбы отмечено у Вас на мини-карте красным (не мигающим!) прямоугольником в южной части карты");
+			SCM(i, COLOR_YELLOW, !"Используйте команду {3377CC}/cteam{FFFF00}, чтобы посмотреть список участников своей ОПГ на территории стрелы");
+			cef_emit_event(i, "show-capture");
+			cef_emit_event(i, "capture-score", CEFINT(CommandKill[0]), CEFINT(CommandKill[1]));
+			cef_emit_event(i, "capture-text", CEFSTR("подготовка к битве"));
+			cef_emit_event(i, "capture-info-name", CEFSTR(name_org), CEFSTR(nameorg));
+			cef_emit_event(i, "show_kill_list");
+			GangZoneFlashForPlayer(i, gz, 0xFF000055);	
 		}
 	}
 	for(new g; g < totalgz; g++) 
@@ -418,14 +383,14 @@ CMD:cteam(playerid, params[])
             count++;
             SetString(name, NameRang(GangWarInfo[i][gPlayerID]));
             name = NameRang(GangWarInfo[i][gPlayerID]);
-            format(string,sizeof(string),"%s%d\t\t%s[%d]\t\t%s[%d]\t\t%d мс\n", string, count, PI[GangWarInfo[i][gPlayerID]][pName], GangWarInfo[i][gPlayerID], name, PI[GangWarInfo[i][gPlayerID]][pRang], GetPlayerPing(GangWarInfo[i][gPlayerID]));
+            format(string,sizeof(string),"%s%d\t%s[%d]\t%s[%d]\t%d мс\n", string, count, PI[GangWarInfo[i][gPlayerID]][pName], GangWarInfo[i][gPlayerID], name, PI[GangWarInfo[i][gPlayerID]][pRang], GetPlayerPing(GangWarInfo[i][gPlayerID]));
 			bugfix = 1;
 		}
 	}
 	if(bugfix == 0) CEF__Dialog(playerid,0, DIALOG_STYLE_MSGBOX, "{ee3366}Участники стрелы", "{FFFFFF}Список участников пуст.", "Закрыть", "");
 	else 
     {
-        if(PI[playerid][pCapturManager] == 1 || PI[playerod][pRank] >= 9)
+        if(PI[playerid][pCaptureManager] == 1 || PI[playerid][pRang] >= 9)
         {
 		    new str_1[512*2];
 		    format(str_1,sizeof(str_1),"№\tИгрок\tРанг\tПинг\n%s",string);
