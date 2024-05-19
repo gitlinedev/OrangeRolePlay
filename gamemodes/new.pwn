@@ -2446,7 +2446,7 @@ public OnPlayerEnterDynamicCP(playerid,checkpointid)
 public OnPlayerDisconnect(playerid, reason) 
 {
 	cef_destroy_browser(playerid, CEF_INTERFACE_BROWSER_ID);
-	//capture_OnPlayerDisconnect(playerid);
+	capture_OnPlayerDisconnect(playerid);
 	//
     new szDisconnectReason[3][] = {
         "Таймаут/Краш",
@@ -4805,6 +4805,10 @@ public OnPlayerUpdate(playerid)
 			return 1;
 		}
 	}
+	if(PI[playerid][data_AFK] > 60)
+	{
+		AutoKickCapture(playerid);
+	}
     if(PI[playerid][data_AFK] > 1) SetPlayerChatBubble(playerid, "", -1, 20.0, 1100);//, ReloadCef(playerid);
     PI[playerid][data_AFK] = -1;
 	return 1;
@@ -4857,7 +4861,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	business_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 	bl_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 	shop_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-	capture_OnDialogResponse(playerid, dialogid, response);
+	capture_OnDialogResponse(playerid, dialogid, response, listitem);
 
 	switch(dialogid) 
 	{
@@ -7906,6 +7910,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			SavePlayerData(playerid);
 			
 			CheckGangWar(playerid);
+
+			clearDialogTimer(playerid);
 		}
 		case 4500:
         {
@@ -10722,6 +10728,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 15 минут. Причина: DM (п. 1.1)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 1: 
 				{
@@ -10733,6 +10745,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 5 минут. Причина: NonRP Drive (п. 1.19)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 2: 
 				{
@@ -10744,6 +10762,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 10 минут. Причина: DriveBy (п 1.4)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 3: 
 				{
@@ -10755,6 +10779,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 20 минут. Причина: Багоюз (п 1.7)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 4: 
 				{
@@ -10766,6 +10796,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 15 минут. Причина: Помеха работе (п 1.9)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 5: 
 				{
@@ -10777,6 +10813,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 15 минут. Причина: Помеха РП процессу (п 1.22)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 6: 
 				{
@@ -10798,6 +10840,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 5 минут. Причина: TeamKill (п 1.7)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 8: 
 				{
@@ -10866,6 +10914,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 25 минут. Причина: AFK в бою (п 1.5)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 14: 
 				{
@@ -10895,6 +10949,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 60 минут. Причина: Читы / Скрипты (п 1.6)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 17: 
 				{
@@ -10906,6 +10966,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 15 минут. Причина: PowerGaming (п 1.12)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 18: 
 				{
@@ -10917,6 +10983,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на 5 минут. Причина: NonRP /me (п 1.25)", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], PI[playerid][pName],playerid,PI[id][pName]);
 					SavePlayerData(id);
 					PlayerSpawn(id);
+
+					if(PI[id][pOnCapture] == 1)
+					{
+						AutoKickCapture(id);
+						CheckCount(id);
+					}
                 }
                 case 19: 
 				{
@@ -11177,6 +11249,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    PI[GetPVarInt(playerid, "uninviteid")][data_MILITARY] = 1;
 						}
 					}
+				}
+				if(PI[GetPVarInt(playerid, "uninviteid")][pOnCapture] == 1)
+				{
+					AutoKickCapture(GetPVarInt(playerid, "uninviteid"));
+					CheckCount(GetPVarInt(playerid, "uninviteid"));
 				}
 				format(str,sizeof(str),"[R] %s %s уволил из организации %s %s. Причина: %s", name,PI[playerid][pName],name2, PI[GetPVarInt(playerid, "uninviteid")][pName],text);
 				cef_emit_event(GetPVarInt(playerid, "uninviteid"), "hide_kill_list");
@@ -14912,7 +14989,6 @@ stock SettingSpawn(playerid)
 
 	if(GetPVarInt(playerid, "SpecBool") == 1) 
 	{
-		SendClientMessage(playerid, -1, "213");
 	    DeletePVar(playerid, "SpecBool");
 		SetPlayerPosAC(playerid, GetPVarFloat(playerid,"SpecX"), GetPVarFloat(playerid,"SpecY"), GetPVarFloat(playerid,"SpecZ"));
 		SetPlayerFacingAngle(playerid, GetPVarFloat(playerid,"SpecFA"));
@@ -14940,7 +15016,6 @@ stock SettingSpawn(playerid)
 	}
 	if(PI[playerid][pJail] > 0) 
 	{
-		SendClientMessage(playerid, -1, "2134");
 		SetSpawnInfoEx(playerid, skin, 147.3188,1889.2491,-31.0747, 180.0);
 		SetPlayerVirtualWorld(playerid,1);
 		SetPlayerInterior(playerid,1);
@@ -14950,7 +15025,6 @@ stock SettingSpawn(playerid)
 	}
 	else if(PI[playerid][pDemorgan] > 0 && PI[playerid][pDemorganTIME] > 0)
 	{
-		SendClientMessage(playerid, -1, "1213");
 		SetSpawnInfoEx(playerid, skin, 14.5554,2.1119,1001.2870, 180.0);
 		SetPlayerVirtualWorld(playerid,1);
 		SetPlayerInterior(playerid,1);
@@ -14979,7 +15053,6 @@ stock SettingSpawn(playerid)
 	}
 	else
 	{
-		SendClientMessage(playerid, -1, "444");
 		if(PI[playerid][data_SPAWN] == 0)
 		{
 			if(PI[playerid][pLevel] <= 1) 
@@ -14999,7 +15072,6 @@ stock SettingSpawn(playerid)
 				return true;
 			}
 		}
-		SendClientMessage(playerid, -1, "244413");
 		if(PI[playerid][data_SPAWN] == 1)
 		{
 			switch(PI[playerid][pMember])
@@ -15062,7 +15134,6 @@ stock SettingSpawn(playerid)
 				}
 			}
 		}
-		SendClientMessage(playerid, -1, "444213");
 		if(PI[playerid][data_SPAWN] == 2)
 		{
 			if(PI[playerid][data_HOUSE] == INVALID_HOUSE_ID)
@@ -15518,6 +15589,13 @@ CMD:warn(playerid,params[])
 	PI[params[0]][pRang] = 0;
 	PI[params[0]][pAdmin] = 0;
 	UpdatePlayerDataInt(playerid, "Admin", PI[params[0]][pAdmin],20073);
+
+	if(PI[params[0]][pOnCapture] == 1)
+	{
+		AutoKickCapture(params[0]);
+		CheckCount(params[0]);
+	}
+
 	if(PI[params[0]][data_WARN] < 3) 
 	{
 	    PI[params[0]][data_WARN]++;
@@ -15583,6 +15661,12 @@ CMD:ban(playerid,params[])
 	PI[params[0]][pLeader] = 0;
 	PI[params[0]][pRang] = 0;
 	PI[params[0]][pAdmin] = 0;
+
+	if(PI[params[0]][pOnCapture] == 1)
+	{
+		AutoKickCapture(params[0]);
+		CheckCount(params[0]);
+	}
 
 	UpdatePlayerDataInt(playerid, "Admin", PI[params[0]][pAdmin],20170);
 	new str_q[456];
@@ -15776,9 +15860,17 @@ CMD:jail(playerid,params[])
 	if(!IsPlayerLogged{params[0]})return  SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
 	if(params[1] < 1 || params[1] > 600) return SCM(playerid, COLOR_GREY, !"Нельзя меньше 1 минуты и больше 600 минут");
     if(PI[params[0]][pAdmin] > PI[playerid][pAdmin]) return SCM(playerid, COLOR_GREY, !"Нельзя применить к игровому мастеру");
+	if(PI[params[0]][pDemorgan] == 1) return SCM(playerid, COLOR_GREY, !"Игрок уже находиться в деморгане");
 	PI[params[0]][pHospital] = 0;
 	PI[params[0]][pDemorgan] = 1;
 	PI[params[0]][pDemorganTIME] = params[1]*60;
+
+	if(PI[params[0]][pOnCapture] == 1)
+	{
+		AutoKickCapture(params[0]);
+		CheckCount(params[0]);
+	}
+
 	SCMf(playerid, COLOR_TOMATO, "Вы посадили в тюрьму игрока %s на %d минут. Причина: %s", getName(params[0]), params[1], params[2]);
 	SCMf(params[0], COLOR_TOMATO, "Игровой мастер #%d посадил Вас в тюрьму на %d минут. Причина: %s", PI[playerid][pAdminNumber], params[1], params[2]);
 	SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] посадил игрока %s в тюрьму на %d минут. Причина: %s", AdminName[PI[playerid][pAdmin]], PI[playerid][pAdminNumber], getName(playerid),playerid,getName(params[0]),params[1],params[2]);
@@ -15791,6 +15883,7 @@ CMD:unjail(playerid,params[])
 	if(sscanf(params,"u",params[0])) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /unjail [ID игрока]");
     if(!IsPlayerConnected(params[0]))return  SCM(playerid, COLOR_GREY, !"Игрок не в сети");
 	if(!IsPlayerLogged{params[0]})return  SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
+	if(PI[params[0]][pDemorgan] == 0) return SCM(playerid, COLOR_GREY, !"Игрок не находиться в деморгане");
 	PI[params[0]][pJail] = 0;
 	PI[params[0]][pJailTime] = 0;
 	PI[params[0]][pDemorgan]= 0;
@@ -16599,7 +16692,7 @@ CMD:cuff(playerid,params[])
 		PassiveModeOff(params[0]);
 	}
 	SCMf(playerid, 0x4671acff, "Вы надели наручники на %s", getName(playerid));
-	format(str,sizeof(str),"%s надел наручники на %s",getName(playerid),getName(params[0]));
+	format(str,sizeof(str), "%s надел наручники на %s",getName(playerid),getName(params[0]));
  	return ProxDetector(30.0, playerid, str,0xFF99CCFF,0xFF99CCFF,0xFF99CCFF,0xFF99CCFF,0xFF99CCFF);
 }
 CMD:uncuff(playerid,params[]) 
@@ -17845,10 +17938,12 @@ stock ShowDialogResurs(playerid)
 	{FFFFFF}Сообщество ВКонтакте\t\t{FFFF99}vk.com/"VK"", !"Закрыть", !"");
 	return 1;
 }
-CMD:tome(playerid, params[]) {
+CMD:tome(playerid, params[]) 
+{
 	new gotplayer;
 	if(!IsPlayerCops(playerid)) return SCM(playerid, COLOR_GREY, !"Данная команда Вам недоступна");
-	if(sscanf(params, "u", gotplayer)) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /tome [ID игрока]"); {
+	if(sscanf(params, "u", gotplayer)) return SCM(playerid, COLOR_LIGHTGREY, !"Используйте: /tome [ID игрока]"); 
+	{
             if(playerid == gotplayer) return SCM(playerid, COLOR_GREY, !"Вы не можите сопровождать самого себя ");
             else if(!IsPlayerConnected(gotplayer)) return SCM(playerid, COLOR_GREY, !"Игрок не в сети");
             else if(IsPlayerInAnyVehicle(playerid)) return SCM(playerid, COLOR_GREY, !"Вы не можете потащить с машины");
@@ -17857,15 +17952,16 @@ CMD:tome(playerid, params[]) {
             else if(IsPlayerInAnyVehicle(gotplayer)) return SCM(playerid, COLOR_GREY, !"Вы не можете потащить за собой когда игрок в машине");
             new Float: X, Float: Y, Float: Z; GetPlayerPos(gotplayer, X, Y, Z);
             if(!IsPlayerInRangeOfPoint(playerid, 1.5, X, Y, Z)) return SCM(playerid, COLOR_GREY, !"Игрок далеко от вас");
-            else if(FollowBy[gotplayer] != MAX_PLAYERS) {
+            else if(FollowBy[gotplayer] != MAX_PLAYERS) 
+			{
                 SetPVarInt(playerid, "TempFollowBy", -1);
                 FollowBy[gotplayer] = MAX_PLAYERS;
                 KillTimer(TimerForPlayer[gotplayer]);
                 TimerForPlayer[gotplayer] = MAX_PLAYERS;
                 ClearAnimations(playerid);
                 TogglePlayerControllable(gotplayer, 1);
-                SCMf(playerid, COLOR_GREY, !"Вы больше не контролируете %s", PI[gotplayer][pName]);
-                return SCMf(gotplayer, COLOR_GREY, !"%s %s перестал Вас контролировать", rang_police[PI[playerid][pRang]-1][frName], PI[gotplayer][pName]);
+                SCMf(playerid, COLOR_GREY, "Вы больше не контролируете %s", PI[gotplayer][pName]);
+                return SCMf(gotplayer, COLOR_GREY, "%s %s перестал Вас контролировать", rang_police[PI[playerid][pRang]-1][frName], PI[gotplayer][pName]);
             }
             if(GetPVarInt(playerid, "TempFollowBy") != -1) return SCM(playerid, COLOR_GREY, !"Вы не можете сопровождать больше 2х игроков одновременно");
             FollowBy[gotplayer] = playerid;
@@ -18624,6 +18720,13 @@ CMD:bangun(playerid,params[])
 	if(!IsPlayerLogged{id})return  SCM(playerid, COLOR_GREY, !"Игрок не авторизован");
 	if(day < 1 || day > 30) return SCM(playerid, COLOR_GREY,"Нельзя меньше 1 дня и больше 30 дней");
     if(PI[id][pAdmin] > PI[playerid][pAdmin]) return SCM(playerid, COLOR_GREY, !"Нельзя применить к игровому мастеру");
+
+	if(PI[params[0]][pOnCapture] == 1)
+	{
+		AutoKickCapture(params[0]);
+		CheckCount(params[0]);
+	}
+
 	PI[id][pWeaponLock] = day;
 	UpdatePlayerDataInt(id, "bangun", PI[id][pWeaponLock], 25391);
 	SendClientMessagef(id, COLOR_TOMATO, "Игровой мастер #%d заблокировал Вам использование оружия на %d дн. Причина: %s", PI[playerid][pAdminNumber], day, reason);
@@ -24217,7 +24320,7 @@ public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ)
 {
 	if(PI[playerid][pAdmin] <= 1)
 	{
-		SCMf(playerid, COLOR_GREEN, !"Пункт назначения отмечен у Вас на мини-карте!");
+		SCM(playerid, COLOR_GREEN, "Пункт назначения отмечен у Вас на мини-карте!");
 		cef_emit_event(playerid, "show-notify", CEFINT(17), CEFSTR("Пункт назначения отмечен у Вас на мини-карте"), CEFSTR("4ea650"));
 	}
 	return 1;
@@ -25828,7 +25931,7 @@ public OnPlayerPickUpPickup(playerid, pickupid)
             {FFFFFF}Вы действительно хотите участвовать в битве за территорию?\n\n\
             {FFFF99}Вы будете исключены из списка участников,\n\
             если покините зону стрелы, пробудете в AFK\n\
-            более 5 минут или выйдите из игры", !"Вступить", !"Отмена");
+            более 1 минуты или выйдите из игры", !"Вступить", !"Отмена");
         }
     }
 	SetPVarInt(playerid,"PickUPKD",gettime() + 7);

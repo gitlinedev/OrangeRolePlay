@@ -418,8 +418,14 @@ CMD:auninvite(playerid, params[])
 	('%d','%d','%s','Увольнение игровым мастером','%d','%d','%d','%d')",\
 		PI[params[0]][data_ID], PI[params[0]][pMember], getName(params[0]), PI[params[0]][pRang], day, month, year);
 
+	if(PI[params[0]][pOnCapture] == 1)
+	{
+		AutoKickCapture(params[0]);
+		CheckCount(params[0]);
+	}
+
 	SCMf(params[0], COLOR_YELLOW, "Игровой мастер #%d уволил Вас из организации %s (%d ранг)",
-		PI[playerid][pAdminNumber], getName(playerid), Fraction_Name[PI[playerid][pMember]], PI[params[0]][pRang]);
+		PI[playerid][pAdminNumber], Fraction_Name[PI[playerid][pMember]], PI[params[0]][pRang]);
 
 	cef_emit_event(params[0], "hide-capture");
 
@@ -463,6 +469,12 @@ CMD:luninvite(playerid, params[])
 	('%d','%d','%s','Снятие с поста лидера','%d','%d','%d','%d')",\
 		PI[params[0]][data_ID], PI[params[0]][pMember], getName(params[0]), PI[params[0]][pRang], day, month, year );
 
+	if(PI[params[0]][pOnCapture] == 1)
+	{
+		AutoKickCapture(params[0]);
+		CheckCount(params[0]);
+	}
+	
 	SCM(params[0], COLOR_YELLOW, !"Игровой мастер снял Вас с поста лидера организации");
 
 	SendAdminsMessagef(COLOR_ADMINCHAT, "[%s #%d] %s[%d] снял с поста лидера организцаии %s[%d]",\
@@ -507,8 +519,8 @@ stock admins_OnDialogResponse(playerid, dialogid, response, listitem)
                     case 8: SetPlayerPos(playerid, 1907.1965,-2226.8005,43.2401+2);
                     case 9: SetPlayerPos(playerid, 2403.2986,-1849.3372,21.9369+2);
 					case 10: SetPlayerPos(playerid, 2113.0063,1821.8636,23.0438+2);
-                    case 11: SetPlayerPos(playerid, 1558.5304,1820.2159,27.9343+2);
-                    case 12: SetPlayerPos(playerid, -2586.5540,309.6096,20.9953+2);
+                    case 11: SetPlayerPos(playerid, -2586.5540,309.6096,20.9953+2);
+					case 12: SetPlayerPos(playerid, 1812.3840,2095.7266,28.6875+2); // мэрия
                     case 13: SetPlayerPos(playerid, 2336.7915,-1803.0875,33.1497+2);
                     case 14: SetPlayerPos(playerid, 2782.3528,2698.6128,16.7200+2);
                     case 15: SetPlayerPos(playerid, 1880.3647,1180.8679,38.8619+2);
