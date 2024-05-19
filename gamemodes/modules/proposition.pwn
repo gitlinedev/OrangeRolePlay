@@ -220,6 +220,16 @@ stock CheckRequest(playerid)
 			}
 			if(type == 5)
 			{
+				new Float:angle, str[144];
+				GetPlayerFacingAngle(from_player, angle);
+				SetPlayerFacingAngle(playerid, angle + 180);
+				ApplyAnimation(from_player,"GANGS","hndshkfa",4.0,0,0,0,0,0,1);
+				ApplyAnimation(playerid,"GANGS","hndshkfa",4.0,0,0,0,0,0,1);
+				format(str, sizeof(str),"%s пожал руку %s", PI[from_player][pName], getName(playerid));
+			 	ProxDetector(25.0, playerid, str, 0xFF99CCFF, 0xFF99CCFF, 0xFF99CCFF, 0xFF99CCFF, 0xFF99CCFF);
+			}
+			if(type == 6)
+			{
 				new str_3[285];
 				format(str_3,sizeof(str_3),"ЦРБ птг. Батырево: \t\t\tДокумент №%d\n\
 				Гражданин РФ\t\t\t{3377cc}%s\n\
@@ -228,7 +238,7 @@ stock CheckRequest(playerid)
 				{FFFFFF}Зависимость\t\t\tНет", PI[from_player][data_MEDNUM], PI[from_player][pName]);
 				return ShowPlayerDialog(playerid,0, DIALOG_STYLE_LIST, "{ee3366}Лицензии", str_3, "Закрыть", "");
 			}
-			if(type == 6)
+			if(type == 7)
 			{
 				new licb[40+1], licg[40+1];
 				switch(PI[from_player][pDriveLicense]) {
@@ -243,7 +253,7 @@ stock CheckRequest(playerid)
 				format(str_3,sizeof(str_3),"Автошкола птг. Батырево: \t\t\tДокумент №%d\nГражданин РФ\t\t\t{3377cc}%s\n%s\n%s", PI[from_player][data_LICNUM], PI[from_player][pName], licb, licg);
 				ShowPlayerDialog(playerid,0, DIALOG_STYLE_MSGBOX, PI[from_player][pName], str_3, "Закрыть", "");
 			}
-			if(type == 7)
+			if(type == 8)
 			{
 				new money = value_1;
 		        if(GetPlayerMoneyID(from_player) < money) 
@@ -278,7 +288,7 @@ stock CheckRequest(playerid)
 				format(str,sizeof(str),"%s и %s бросили несколько игральных костей {FF9966}(%d|%d)",PI[from_player][pName],getName(playerid), p1,p2);
 		        ProxDetector(25.0, from_player, str, 0xFF99CCFF,0xFF99CCFF,0xFF99CCFF,0xFF99CCFF,0xFF99CCFF);
 			}
-			if(type == 8)
+			if(type == 9)
 			{
 				new playerhouse[5];
 				if(PI[from_player][data_HOUSE] != -1) format(playerhouse,sizeof(playerhouse),PI[from_player][data_HOUSE]);
@@ -288,21 +298,21 @@ stock CheckRequest(playerid)
 				ShowPlayerDialog(playerid,0, DIALOG_STYLE_LIST, "{ee3366}Паспорт", dialog, "Закрыть", "");
 				SetPlayerChatBubble(playerid, "просматривает документы", 0xFF99CCFF, 20.0, 4000);
 			}
-			if(type == 9)
+			if(type == 10)
 			{
 				new dialog[256];
 				format(dialog,sizeof(dialog),"1. ТТ:\t\t\t%d %%\n2. Тайзер\t%d %%\n3. Desert Eagle:\t\t%d %%\n4. Дробовик:\t\t\t%d\n5. Автоматический дробовик:\t\t\t%d %%\n6. АК-47:\t\t%d %%", PI[from_player][pSkillPistol],PI[from_player][pSkillSDPistol],PI[from_player][pSkillDeagle],PI[from_player][pSkillShotgun],PI[from_player][pSkillMP5],PI[from_player][data_AK47]);
 				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_LIST, "{ee3366}Навыки владения оружием", dialog, "Закрыть", "");
 			 	SetPlayerChatBubble(playerid, "просматривает навыки владения оружием", 0xFF99CCFF, 20.0, 4000);
 			}
-			if(type == 10)
+			if(type == 11)
 			{
 				pDialogCurrectTime[playerid] = gettime() + 5;
 				pDialogTimer[playerid] = SetTimerEx("DialogTimerInvite", 500, true, "i", playerid);
 			    SetPVarInt(playerid,"from_player",from_player);
 				return 1;
 			}
-			if(type == 11)
+			if(type == 12)
 			{
 				if(GetPlayerMoneyID(playerid) < value_1) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 				GivePlayerMoneyLog(playerid,-value_1);
@@ -320,7 +330,7 @@ stock CheckRequest(playerid)
 				    }
 				}
 			}
-			if(type == 12)
+			if(type == 13)
 			{
 				if(GetPlayerMoneyID(playerid) < 30000) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 				GivePlayerMoneyLog(playerid,-30000);
@@ -329,7 +339,7 @@ stock CheckRequest(playerid)
 				if(PI[playerid][data_LICNUM] == 0) PI[playerid][data_NUMBER] = RandomEX(1111111, 6666666);
 				SCM(playerid, 0x9F81F7FF, !"Вы купили лицензию на оружие за 30000 рублей");
 			}
-			if(type == 13)
+			if(type == 14)
 			{
 				if(GetPlayerMoneyID(playerid) < 5000) return SCM(playerid, COLOR_GREY, !"У Вас недостаточно денег на руках");
 				GivePlayerMoneyLog(playerid,-5000);
@@ -338,21 +348,21 @@ stock CheckRequest(playerid)
 				if(PI[playerid][data_LICNUM] == 0) PI[playerid][data_NUMBER] = RandomEX(1111111, 6666666);
 				SCM(playerid, 0x9F81F7FF, !"Вы купили водительские права за 5000 рублей");
 			}
-			if(type == 14)
+			if(type == 15)
 			{
 				pDialogCurrectTime[playerid] = gettime() + 5;
 				pDialogTimer[playerid] = SetTimerEx("DialogTimerGiveGun", 500, true, "i", playerid);
 				SetPVarInt(playerid, "from_player", from_player);
 				SetPVarInt(playerid, "value_1", value_1);
 			}
-			if(type == 15)
+			if(type == 16)
 			{
 				pDialogCurrectTime[playerid] = gettime() + 5;
 				pDialogTimer[playerid] = SetTimerEx("DialogTimerSellGun", 500, true, "i", playerid);
 				SetPVarInt(playerid, "from_player", from_player);
 				SetPVarInt(playerid, "value_1", value_1);
 			}
-			if(type == 16)
+			if(type == 17)
 			{
 				SCMf(from_player, 0xFF99CCFF, !"Сотрудник БЦРБ %s провёл курс платного лечения.",PI[from_player][pName]);
 				GivePlayerMoneyLog(playerid, -2500);
