@@ -178,6 +178,7 @@ stock capture_SecondTimer()
 				new time[12];
 				format(time, sizeof(time), "%d:%02d", WarTimeMin, WarTimeSec);
 				cef_emit_event(i, "capture-time", CEFSTR(time));
+				cef_emit_event(i, "clear-kill-list");
 				cef_emit_event(i, "capture-text", CEFSTR("начало раунда"));
 			}
 		}
@@ -310,6 +311,7 @@ stock capture_SecondTimer()
 				new time[12];
 				format(time, sizeof(time), "%d:%02d", WarTimeMin, WarTimeSec);
 				cef_emit_event(i, "capture-time", CEFSTR(time));
+				cef_emit_event(i, "clear-kill-list");
 				cef_emit_event(i, "capture-text", CEFSTR("начало раунда"));
 			}
 		}
@@ -441,6 +443,7 @@ stock capture_SecondTimer()
 				new time[12];
 				format(time, sizeof(time), "%d:%02d", WarTimeMin, WarTimeSec);
 				cef_emit_event(i, "capture-time", CEFSTR(time));
+				cef_emit_event(i, "clear-kill-list");
 				cef_emit_event(i, "capture-text", CEFSTR("начало раунда"));
 			}
 		}
@@ -572,6 +575,7 @@ stock capture_SecondTimer()
 				new time[12];
 				format(time, sizeof(time), "%d:%02d", WarTimeMin, WarTimeSec);
 				cef_emit_event(i, "capture-time", CEFSTR(time));
+				cef_emit_event(i, "clear-kill-list");
 				cef_emit_event(i, "capture-text", CEFSTR("начало раунда"));
 			}
 		}
@@ -788,7 +792,6 @@ stock capture_SecondTimer()
 						}
 						GangZoneHideForPlayer(i, WarZone);
 						GangZoneShowForPlayer(i, WarZone, col);
-						ClearKillFeed(i);
 						cef_emit_event(i, "hide-capture");
 						cef_emit_event(i, "clear-kill-list");
 						TogglePlayerControllable(i, true);
@@ -800,8 +803,8 @@ stock capture_SecondTimer()
 				{
 					if(PI[i][pOnCapture] == 1 || GetPVarInt(i, "DeathOnCapture") == 0 || PI[i][pMember] == Command[1])
 					{
-						SetPlayerPos(i, 1524.0425,-1212.5947,15.0275);
-						SetPlayerFacingAngle(i, 87.1295);
+						SetPlayerPos(i, 1540.8573,-1219.3041,15.0275);
+						SetPlayerFacingAngle(i, 359.3068);
 					}
 				}
 				GangWarStatus = 0;
@@ -824,7 +827,6 @@ stock capture_SecondTimer()
 						GangZoneHideForPlayer(i, WarZone);
 						GangZoneShowForPlayer(i, WarZone, col);
 						SaveGZ(Command[0], WarZone);
-						ClearKillFeed(i);
 						cef_emit_event(i, "hide-capture");
 						cef_emit_event(i, "clear-kill-list");
 						TogglePlayerControllable(i, true);
@@ -836,8 +838,8 @@ stock capture_SecondTimer()
 				{
 					if(PI[i][pOnCapture] == 1 || GetPVarInt(i, "DeathOnCapture") == 0 || PI[i][pMember] == Command[0])
 					{
-						SetPlayerPos(i, 1524.0425,-1212.5947,15.0275);
-						SetPlayerFacingAngle(i, 87.1295);
+						SetPlayerPos(i, 1540.8573,-1219.3041,15.0275);
+						SetPlayerFacingAngle(i, 359.3068);
 					}
 				}
 				GangWarStatus = 0;
@@ -1338,10 +1340,5 @@ CMD:cteam(playerid, params[])
 		    ShowPlayerDialog(playerid, 0, DIALOG_STYLE_TABLIST_HEADERS, "{ee3366}”частники стрелы", str_1, "«акрыть", "");
         }
 	}
-	return 1;
-}
-CMD:test(playerid)
-{
-	SendClientMessagef(playerid, -1, "count_1 %d, count_2, %d", count_1, count_2);
 	return 1;
 }

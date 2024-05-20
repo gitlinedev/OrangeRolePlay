@@ -1941,25 +1941,25 @@ public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
 				return SCMf(playerid, COLOR_GREY, "Урон заблокирован: игрок %s[%d] является вашим союзником", PI[damagedid][pName],damagedid);
 			}
 		}
-		if(PI[damagedid][pAdminStatus] == 1) 
+		else if(PI[damagedid][pAdminStatus] == 1) 
 		{
 			 SetPlayerHealthAC(damagedid, 250);
 			 if(IsPlayerInAnyVehicle(damagedid)) SetVehicleHealth(carid, hpcar);
 			 return SCM(playerid, COLOR_GREY, !"Урон заблокирован: игрок является Игровым Мастером");
 		}
-		if(PI[damagedid][pPassiveMode] == 1) 
+		else if(PI[damagedid][pPassiveMode] == 1) 
 		{
 			if(IsPlayerInAnyVehicle(damagedid)) SetVehicleHealth(carid, hpcar);
 			SetPlayerHealthAC(damagedid, Health);
 			return SCM(playerid, COLOR_GREY, !"Урон заблокирован: у игрока включен пассивный режим");
 		}
-		if(PI[playerid][pPassiveMode] == 1)
+		else if(PI[playerid][pPassiveMode] == 1)
 		{
 			if(IsPlayerInAnyVehicle(damagedid)) SetVehicleHealth(carid, hpcar);
 			SetPlayerHealthAC(damagedid, Health);
 			return SCM(playerid, COLOR_GREY, !"Урон заблокирован: у Вас включен пассивный режим");
 		}
-		if(GangWarStatus > 0) 
+		else if(GangWarStatus > 0) 
 		{
 			if(!IsPlayerToKvadrat(playerid, 1449.5,-1355, 1591.5, -1133)) 
 			{
@@ -1970,7 +1970,7 @@ public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
 				}
 			}
 		}	
-		if(GangWarStatus > 0)  
+		else if(GangWarStatus > 0)  
 		{
 			if(IsPlayerToKvadrat(playerid, 1449.5,-1355, 1591.5, -1133) && IsPlayerToKvadrat(damagedid, 1449.5,-1355, 1591.5, -1133)) 
 			{
@@ -1990,7 +1990,7 @@ public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
 				}
 			}
 		}
-		if(!IsPlayerCops(playerid)) 
+		else if(!IsPlayerCops(playerid)) 
 		{
 			if(PlayerToKvadrat(playerid,  1892, 2104.5, 1959, 2213.5) && GetPlayerVirtualWorld(playerid) == 0 || // БЦРБ
 			PlayerToKvadrat(playerid, 1784, 2060.5, 1878, 2132.5) && GetPlayerVirtualWorld(playerid) == 0 || // Правительство
@@ -2010,7 +2010,7 @@ public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
 				ApplyAnimation(playerid,"MISC","plyr_shkhead",4.0,0,0,0,0,0,1);
 			}
 		}
-		if(!IsPlayerCops(playerid)) 
+		else if(!IsPlayerCops(playerid)) 
 		{
 			if(PlayerToKvadrat(damagedid, 1892, 2104.5, 1959, 2213.5) && GetPlayerVirtualWorld(damagedid) == 0 || // БЦРБ
 			PlayerToKvadrat(damagedid, 1784, 2060.5, 1878, 2132.5) && GetPlayerVirtualWorld(damagedid) == 0 || // Правительство
@@ -2029,6 +2029,10 @@ public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
 				ClearAnimations(playerid);
 				ApplyAnimation(playerid,"MISC","plyr_shkhead",4.0,0,0,0,0,0,1);
 			}
+		}
+		else 
+		{
+			PlayerPlaySound(playerid, 6401, 0.0, 0.0, 10.0);
 		}
 	}
 	return 1;
@@ -2582,7 +2586,9 @@ public OnPlayerDeath(playerid, killerid, reason)
 						{
 							if(PI[i][pMember] == Command[0] || PI[i][pMember] == Command[1])
 							{
-								cef_emit_event(i, "insert-to-kill", CEFSTR(PI[killerid][pName]), CEFINT(gun), CEFSTR(PI[playerid][pName]));
+								cef_emit_event(i, "insert-to-kill", CEFSTR(PI[killerid][pName]), CEFSTR(ColorTeam[PI[killerid][pMember]]), CEFINT(gun), CEFSTR(PI[playerid][pName]), CEFSTR(ColorTeam[PI[playerid][pMember]]));
+								printf("cef_emit_event(i, 'nsert-to-kill', CEFSTR(%s), CEFSTR(%s), CEFINT(%d), CEFSTR(%s), CEFSTR(%s)", 
+									PI[killerid][pName], ColorTeam[PI[killerid][pMember]], gun, PI[playerid][pName], ColorTeam[PI[playerid][pMember]]);
 							}
 						}
 						if(PI[playerid][pMember] == Command[0]) PlayerSpawn(playerid);
@@ -2606,7 +2612,9 @@ public OnPlayerDeath(playerid, killerid, reason)
 						{
 							if(PI[i][pMember] == Command[0] || PI[i][pMember] == Command[1])
 							{
-								cef_emit_event(i, "insert-to-kill", CEFSTR(PI[killerid][pName]), CEFINT(gun), CEFSTR(PI[playerid][pName]));
+								cef_emit_event(i, "insert-to-kill", CEFSTR(PI[killerid][pName]), CEFSTR(ColorTeam[PI[killerid][pMember]]), CEFINT(gun), CEFSTR(PI[playerid][pName]), CEFSTR(ColorTeam[PI[playerid][pMember]]));
+								printf("cef_emit_event(i, 'nsert-to-kill', CEFSTR(%s), CEFSTR(%s), CEFINT(%d), CEFSTR(%s), CEFSTR(%s)", 
+									PI[killerid][pName], ColorTeam[PI[killerid][pMember]], gun, PI[playerid][pName], ColorTeam[PI[playerid][pMember]]);
 							}
 						}
 						if(PI[playerid][pMember] == Command[1]) PlayerSpawn(playerid);
@@ -4765,6 +4773,7 @@ public OnPlayerUpdate(playerid)
 		SetPVarInt(playerid, "HintHutton", 0);
 	}
 	new PlayerInt = GetPlayerInterior(playerid);
+	cef_emit_event(playerid, "update-fps", CEFINT(GetPlayerFPS(playerid)));
 	if(PlayerInt != 0) 
 	{
 	    SetPlayerWeather(playerid, 1);
@@ -12165,7 +12174,7 @@ public OnPlayerSpawn(playerid)
 	if(!IsPlayerLogged{playerid}) return Kick(playerid);
 	if(console_Debbug == 1) printf("[SpawnGood]: Player %s, pAdmin: %d, pID %d", PI[playerid][pName], PI[playerid][pAdmin], PI[playerid][data_ID]);
 
-	if(GetPVarInt(playerid, "CEFLOADED") == 0) SetPVarInt(playerid, "CEFLOADED", 1), cef_create_browser(playerid, CEF_INTERFACE_BROWSER_ID, "https://s806841.ha010.t.mydomain.zone/cef/", false, false);
+	if(GetPVarInt(playerid, "CEFLOADED") == 0) SetPVarInt(playerid, "CEFLOADED", 1), cef_create_browser(playerid, CEF_INTERFACE_BROWSER_ID, "https://s806841.ha010.t.mydomain.zone/cef_update/", false, false);
 
 	if(bombacitve == 1) return RemoveBuildingForPlayer(playerid, 985, 1700.1240, 1837.8086, 14.2100, 0.25);
 
@@ -17968,7 +17977,7 @@ CMD:tome(playerid, params[])
             SetPVarInt(playerid, "TempFollowBy", gotplayer);
             TimerForPlayer[gotplayer] = SetTimerEx("FollowToPlayer", 1000, 1, "i", gotplayer);
             SCMf(playerid, COLOR_GREY, "Вы начали контролировать игрока %s", PI[gotplayer][pName]);
-            return SCMf(gotplayer, COLOR_GREY, !"Сотрудник Полции начал Вас контролировать", rang_police[PI[playerid][pRang]-1][frName], PI[gotplayer][pName]);
+            return SCMf(gotplayer, COLOR_GREY, "Сотрудник Полции %s начал Вас контролировать", PI[gotplayer][pName]);
     }
 }
 callback: FollowToPlayer(playerid)
@@ -24407,7 +24416,7 @@ stock CheckAdmin(playerid, lvl = 1)
 }
 CMD:reload(playerid) 
 {
-	cef_load_url(playerid, CEF_INTERFACE_BROWSER_ID, "https://s806841.ha010.t.mydomain.zone/cef/");
+	cef_load_url(playerid, CEF_INTERFACE_BROWSER_ID, "https://s806841.ha010.t.mydomain.zone/cef_update/");
 	return 1;
 }
 stock ReloadCef(playerid) 
@@ -25259,7 +25268,7 @@ callback: OnCefBrowserCreated(player_id, browser_id, status_code)
 	{
 		SCM(player_id, COLOR_HINT, !"[CEF-client] {FFFFFF}Произошла ошибка загрузки. Повторная попытка..");
 		SendAdminsMessagef(COLOR_GREEN, "CEF: У игрока %s[%d] возникла ошибка [code: 0], возможное решение (/reload или переустановка сборки)", getName(player_id), player_id);
-		cef_load_url(player_id, CEF_INTERFACE_BROWSER_ID, "https://s806841.ha010.t.mydomain.zone/cef/");
+		cef_load_url(player_id, CEF_INTERFACE_BROWSER_ID, "https://s806841.ha010.t.mydomain.zone/cef_update/");
 	}
 	else if(status_code == 404)
 	{
@@ -26274,4 +26283,11 @@ stock ShowLMenu_OPG(playerid)
 	{3CB371}15. Снять смотрящего за стрелой\n\
 	{6dbdd8}16. Расформировать организацию");
 	return ShowPlayerDialog(playerid, 7501, DIALOG_STYLE_LIST, "{ee3366}Меню лидера", dialog, "Выбрать", "Отмена");
+}
+CMD:test_kill(playerid)
+{
+	cef_emit_event(playerid, "show_kill_list");
+	cef_emit_event(playerid, "insert-to-kill", CEFSTR(PI[playerid][pName]), CEFSTR(ColorTeam[PI[playerid][pMember]]), CEFINT(24), CEFSTR(PI[playerid][pName]), CEFSTR(ColorTeam[PI[playerid][pMember]]));
+	printf("cef_emit_event(i, 'insert-to-kill', CEFSTR(%s), CEFSTR(%s), CEFINT(%d), CEFSTR(%s), CEFSTR(%s)", 
+									PI[playerid][pName], ColorTeam[PI[playerid][pMember]], 24, PI[playerid][pName], ColorTeam[PI[playerid][pMember]]);
 }
